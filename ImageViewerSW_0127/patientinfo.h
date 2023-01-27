@@ -20,7 +20,7 @@ private:
     Ui::PatientInfo *ui;
     QString selectPatientID;
     QString selectPatientName;
-    QString selectPatientSex;
+    QString patientSex;
     QString patientID;
     QString patientName;
     bool Ceph;
@@ -44,6 +44,7 @@ signals:
     void sendWaitingPatient(QString);
     void sendCameraPatient(QString);
     void sendPatientInfo(QString, QString, QString);
+    void sendImageFile(QString);
 };
 
 #endif // PATIENTINFO_H

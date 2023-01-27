@@ -6,7 +6,7 @@
 #include <QPinchGesture>
 #include <QGraphicsItem>
 
-#define ItemWidth   16
+#define ItemWidth   5
 
 ImageScene::ImageScene(QWidget *parent)
     : QGraphicsScene(parent)
@@ -21,6 +21,7 @@ ImageScene::ImageScene(QWidget *parent)
     //그리기 타입 초깃값 설정(일반 선 그리기)
     m_drawType = Lines;
     m_currentItem = nullptr;
+    point = 0;
     update();
 
 }
@@ -79,6 +80,10 @@ void ImageScene::ReceiveType(int type)
     //Pano : 길이 측정
     else if(type == 10){
         m_drawType = Pano;
+    }
+
+    else if(type == 11){
+        m_drawType = Angle;
     }
 
     qDebug() << "ImageView : " << type;
@@ -248,6 +253,83 @@ void ImageScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
         m_startPos = event->scenePos();
     }
 
+    else if(m_drawType == Angle){
+        switch (point) {
+        case 0: {
+            foreach(auto item, m_itemList)
+                removeItem(item);
+            update();
+            m_itemList.clear();
+
+
+            first = event->scenePos();
+            QGraphicsEllipseItem* item1 = new QGraphicsEllipseItem();
+            item1->setFlags(QGraphicsItem::ItemIsMovable | QGraphicsItem::ItemIsSelectable);
+            item1->setBrush(QBrush(QColor(m_penColor), Qt::SolidPattern));
+            item1->setRect(first.x()-ItemWidth/2, first.y()-ItemWidth/2, ItemWidth, ItemWidth);
+            item1->setTransformOriginPoint(ItemWidth/2, ItemWidth/2);
+            addItem(item1);
+            m_itemList.append(item1);
+
+            break;
+        }
+
+        case 1: {
+            second = event->scenePos();
+            QGraphicsEllipseItem* item1 = new QGraphicsEllipseItem();
+            item1->setFlags(QGraphicsItem::ItemIsMovable | QGraphicsItem::ItemIsSelectable);
+            item1->setBrush(QBrush(QColor(m_penColor), Qt::SolidPattern));
+            item1->setRect(second.x()-ItemWidth/2, second.y()-ItemWidth/2, ItemWidth, ItemWidth);
+            item1->setTransformOriginPoint(ItemWidth/2, ItemWidth/2);
+            addItem(item1);
+            m_itemList.append(item1);
+
+            QPainterPath path(first);
+            path.quadTo(first, second);
+            QGraphicsPathItem* line = addPath(path, QPen(Qt::red, 2,
+                                                         Qt::SolidLine, Qt::RoundCap));
+            m_itemList.append(line);
+            break;
+        }
+
+        case 2: {
+            third = event->scenePos();
+            QGraphicsEllipseItem* item1 = new QGraphicsEllipseItem();
+            item1->setFlags(QGraphicsItem::ItemIsMovable | QGraphicsItem::ItemIsSelectable);
+            item1->setBrush(QBrush(QColor(m_penColor), Qt::SolidPattern));
+            item1->setRect(third.x()-ItemWidth/2, third.y()-ItemWidth/2, ItemWidth, ItemWidth);
+            item1->setTransformOriginPoint(ItemWidth/2, ItemWidth/2);
+
+            addItem(item1);
+            m_itemList.append(item1);
+
+            QPainterPath path(second);
+            path.quadTo(second, third);
+            QGraphicsPathItem* line = addPath(path, QPen(Qt::red, 2,
+                                                         Qt::SolidLine, Qt::RoundCap));
+            m_itemList.append(line);
+            break;
+        }
+        }
+
+        point++;
+        if(point >= 3)
+        {
+            if(!((third.x() == first.x() && third.y() == first.y()) ||
+                 (second.x() == third.x() && second.y() == third.y()))){
+                double Radian = atan((second.y() - third.y()) / (second.x() - third.x()))
+                        - atan((first.y() - third.y()) / (first.x() - third.x()));
+
+                double Degree = floor(qRadiansToDegrees(Radian));
+
+                qDebug() << Degree;
+            }
+            point = 0;
+        }
+
+
+    }
+
     QGraphicsScene::mousePressEvent(event);
 }
 
@@ -381,6 +463,10 @@ void ImageScene::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
         addItem(item);
         m_currentItem = item;
 
+        double length = qSqrt(qPow((m_startPos.x() - event->scenePos().x())*xRate, 2)
+                               + qPow((m_startPos.y() - event->scenePos().y())*yRate, 2)) * 0.08733;
+        emit SendTypeLength("Ceph", length);
+
         qDebug() << qSqrt(qPow((m_startPos.x() - event->scenePos().x())*xRate, 2)
                     + qPow((m_startPos.y() - event->scenePos().y())*yRate, 2)) * 0.08733 <<"mm";
     }
@@ -395,6 +481,10 @@ void ImageScene::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
         item->setPen(QPen(QColor(Qt::red), 1));
         addItem(item);
         m_currentItem = item;
+
+        double length = qSqrt(qPow((m_startPos.x() - event->scenePos().x())*xRate, 2)
+                               + qPow((m_startPos.y() - event->scenePos().y())*yRate, 2)) * 0.096358;
+        emit SendTypeLength("Pano", length);
 
         qDebug() << qSqrt(qPow((m_startPos.x() - event->scenePos().x())*xRate, 2)
                     + qPow((m_startPos.y() - event->scenePos().y())*yRate, 2)) * 0.096358 <<"mm";
@@ -423,6 +513,9 @@ void ImageScene::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
             }
         }
     }
+        break;
+
+    default:
         break;
 
     }

@@ -30,14 +30,16 @@ ImageAlbum::ImageAlbum(QWidget *parent)
     imageScene = new ImageScene(this);
     m_prescription = new Prescription(0);
 
+    //초깃값 설정
+    prescriptionCheck = false;
+    ui->LengthResult->setReadOnly(true);
+
     imageView->setGeometry(6, 6, 600, 600);
     imageView->setSizeAdjustPolicy(QAbstractScrollArea::AdjustToContents);
     imageView->setDragMode(QGraphicsView::NoDrag);
     ui->gridLayout->addWidget(imageView);
     imageView->setAlignment(Qt::AlignCenter);
     imageView->setScene(imageScene);
-
-//    connect(imageScene, SIGNAL(changed(const QList<QRectF> &)), imageScene, SLOT(updateSceneeee()));
 
     connect(ui->listWidget, SIGNAL(itemDoubleClicked(QListWidgetItem*)), this, SLOT(selectItem(QListWidgetItem*)));
 
@@ -66,6 +68,7 @@ ImageAlbum::ImageAlbum(QWidget *parent)
     connect(ui->Rectangle, SIGNAL(clicked()), this, SLOT(RectangleItem()));
     connect(ui->TextBox, SIGNAL(clicked()), this, SLOT(TextBox()));
     connect(ui->LengthMeasurement, SIGNAL(clicked()), this, SLOT(Length()));
+    connect(ui->Angle, SIGNAL(clicked()), this, SLOT(Angle()));
 
     /*GraphicsView에 펜 색상, 펜 두께, 선인지 도형인지를 구분하여 시그널 전송*/
     connect(this, SIGNAL(SendThickness(int)), imageScene, SLOT(ReceiveThickness(int)));
@@ -74,6 +77,9 @@ ImageAlbum::ImageAlbum(QWidget *parent)
     connect(this, SIGNAL(SendText(QString)), imageScene, SLOT(ReceiveText(QString)));
     connect(this, SIGNAL(SendLength(int, int, int, int)), imageScene, SLOT(ReceiveLength(int, int, int, int)));
 
+    //GraphicsSCene에서 측정한 길이를 위젯 화면에 보여주기 위한 시그널-슬롯
+    connect(imageScene, SIGNAL(SendTypeLength(QString, double)), this, SLOT(ReceiveTypeLength(QString, double)));
+
     //처방전 작성 버튼 클릭 시 처방전 클래스로 의사 정보, 환자 정보를 전송
     connect(this, SIGNAL(sendPrescription(QString, QString, QString, QString, QString)),
             m_prescription, SLOT(receivePrescription(QString, QString, QString, QString, QString)));
@@ -81,7 +87,7 @@ ImageAlbum::ImageAlbum(QWidget *parent)
     //처방전 클래스에서 처방전 작성 완료 되면 해당 내용을 서버로 보내주기 위한 과정
     connect(m_prescription, SIGNAL(sendPrescriptionFinish(QString)), this, SLOT(receivePrescriptionFinish(QString)));
 
-    reloadImages();
+    reloadImages(0);
 }
 
 ImageAlbum::~ImageAlbum()
@@ -89,9 +95,10 @@ ImageAlbum::~ImageAlbum()
 
 }
 
-void ImageAlbum::reloadImages()
+void ImageAlbum::reloadImages(QString ID)
 {
     QDir dir(".");
+//    QDir dir(QString("./Image/%1").arg(ID));
     QStringList filters;
     filters << "*.png" << "*.jpg" << "*.bmp" << "*.gif";
     QFileInfoList fileInfoList = dir.entryInfoList(filters, QDir::Files | QDir::NoDotAndDotDot);
@@ -104,11 +111,29 @@ void ImageAlbum::reloadImages()
     };
 }
 
+void ImageAlbum::ReceiveTypeLength(QString type, double length)
+{
+    QString Result = QString::number(length);
+    ui->LengthResult->setText(type + " " + Result + " mm");
+}
+
+void ImageAlbum::Angle()
+{
+    emit SendType(11);
+}
+
 void ImageAlbum::Length()
 {
-    if(ui->Ceph->hasFocus())
+    //이미지가 선택되지 않았다면 예외처리
+    if(!selectImage){
+        QMessageBox:: critical(this, "경고", "이미지를 선택하세요");
+        return;
+    }
+    ui->LengthResult->clear();
+
+    if(ui->Ceph->isChecked())
         emit SendType(9);
-    else if(ui->Pano->hasFocus())
+    else if(ui->Pano->isChecked())
         emit SendType(10);
 
     int origWidth = selectImage->width();
@@ -120,6 +145,11 @@ void ImageAlbum::Length()
 
 void ImageAlbum::TextBox()
 {
+    if(!selectImage){
+        QMessageBox:: critical(this, "경고", "이미지를 선택하세요");
+        return;
+    }
+
     ui->lineEdit->text();
     emit SendText(ui->lineEdit->text());
     emit SendType(6);
@@ -128,36 +158,71 @@ void ImageAlbum::TextBox()
 
 void ImageAlbum::RectangleItem()
 {
+    if(!selectImage){
+        QMessageBox:: critical(this, "경고", "이미지를 선택하세요");
+        return;
+    }
+
     emit SendType(5);
 }
 
 void ImageAlbum::Cursor()
 {
+    if(!selectImage){
+        QMessageBox:: critical(this, "경고", "이미지를 선택하세요");
+        return;
+    }
+
     emit SendType(3);
 }
 
 void ImageAlbum::DeleteItem()
 {
+    if(!selectImage){
+        QMessageBox:: critical(this, "경고", "이미지를 선택하세요");
+        return;
+    }
+
     emit SendType(7);
 }
 
 void ImageAlbum::Ellipse()
 {
+    if(!selectImage){
+        QMessageBox:: critical(this, "경고", "이미지를 선택하세요");
+        return;
+    }
+
     emit SendType(4);
 }
 
 void ImageAlbum::Triangle()
 {
+    if(!selectImage){
+        QMessageBox:: critical(this, "경고", "이미지를 선택하세요");
+        return;
+    }
+
     emit SendType(2);
 }
 
 void ImageAlbum::Lines()
 {
+    if(!selectImage){
+        QMessageBox:: critical(this, "경고", "이미지를 선택하세요");
+        return;
+    }
+
     emit SendType(0);
 }
 
 void ImageAlbum::Freehand()
 {
+    if(!selectImage){
+        QMessageBox:: critical(this, "경고", "이미지를 선택하세요");
+        return;
+    }
+
     emit SendType(1);
 }
 
@@ -195,6 +260,11 @@ void ImageAlbum::RightRotate()
 
 void ImageAlbum::OrigImage()
 {
+    if(!selectImage){
+        QMessageBox:: critical(this, "경고", "이미지를 선택하세요");
+        return;
+    }
+
     imageView->resetTransform();
     imageScene->clear();
     imageScene->setBackgroundBrush(Qt::white);
@@ -216,6 +286,7 @@ void ImageAlbum::selectItem(QListWidgetItem* item)
     selectImage = new QImage(ui->listWidget->currentItem()->statusTip());
     imageView->resetTransform();
     imageScene->clear();
+    ui->LengthResult->clear();
 
     QSize size = imageView->viewport()->size();
     QGraphicsItem *i = imageScene->addPixmap(QPixmap(item->statusTip()).scaled(size, Qt::KeepAspectRatio, Qt::SmoothTransformation));
@@ -228,17 +299,26 @@ void ImageAlbum::selectItem(QListWidgetItem* item)
 
 void ImageAlbum::VReverse()
 {
+    if(!selectImage){
+        QMessageBox:: critical(this, "경고", "이미지를 선택하세요");
+        return;
+    }
+
     imageScene->clear();
     selectImage->mirror(true, false);
 
     QPixmap buf = QPixmap::fromImage(*selectImage);
-//    imageView->setScene(imageScene);
     imageScene->addPixmap(buf.scaled(imageView->width(), imageView->height(),
                                                    Qt::KeepAspectRatio, Qt::SmoothTransformation));
 }
 
 void ImageAlbum::HReverse()
 {
+    if(!selectImage){
+        QMessageBox:: critical(this, "경고", "이미지를 선택하세요");
+        return;
+    }
+
     imageScene->clear();
     selectImage->mirror(false, true);
 
@@ -250,6 +330,11 @@ void ImageAlbum::HReverse()
 
 void ImageAlbum::Brightness(int value)
 {
+    if(!selectImage){
+        QMessageBox:: critical(this, "경고", "이미지를 선택하세요");
+        return;
+    }
+
     imageScene->clear();
     QImage* image = selectImage;
     Mat out;
@@ -274,7 +359,6 @@ void ImageAlbum::Brightness(int value)
                 QImage::Format_Grayscale8);
 
     QPixmap buf = QPixmap::fromImage(image_brightness);
-//    imageView->setScene(imageScene);
     imageScene->addPixmap(buf.scaled(imageView->width(), imageView->height(),
                                                    Qt::KeepAspectRatio, Qt::SmoothTransformation));
 
@@ -283,6 +367,11 @@ void ImageAlbum::Brightness(int value)
 
 void ImageAlbum::HistEqual()
 {
+    if(!selectImage){
+        QMessageBox:: critical(this, "경고", "이미지를 선택하세요");
+        return;
+    }
+
     imageScene->clear();
     QImage* image = selectImage;
 
@@ -306,7 +395,6 @@ void ImageAlbum::HistEqual()
                 QImage::Format_Grayscale8);
 
     QPixmap buf = QPixmap::fromImage(image_Histogram);
-//    imageView->setScene(imageScene);
     imageScene->addPixmap(buf.scaled(imageView->width(), imageView->height(),
                                                    Qt::KeepAspectRatio, Qt::SmoothTransformation));
     *selectImage = image_Histogram.convertToFormat(QImage::Format_BGR888);
@@ -314,6 +402,11 @@ void ImageAlbum::HistEqual()
 
 void ImageAlbum::Reverse()
 {
+    if(!selectImage){
+        QMessageBox:: critical(this, "경고", "이미지를 선택하세요");
+        return;
+    }
+
     imageScene->clear();
     QImage* image = selectImage;
 
@@ -344,6 +437,11 @@ void ImageAlbum::Reverse()
 
 void ImageAlbum::Contrast(double value)
 {
+    if(!selectImage){
+        QMessageBox:: critical(this, "경고", "이미지를 선택하세요");
+        return;
+    }
+
     imageScene->clear();
     QImage* image = selectImage;
 
@@ -366,7 +464,6 @@ void ImageAlbum::Contrast(double value)
                 QImage::Format_Grayscale8);
 
     QPixmap buf = QPixmap::fromImage(image_Contrast);
-//    imageView->setScene(imageScene);
     imageScene->addPixmap(buf.scaled(imageView->width(), imageView->height(),
                                                    Qt::KeepAspectRatio, Qt::SmoothTransformation));
 //    *selectImage = image_Contrast.convertToFormat(QImage::Format_BGR888);
@@ -416,6 +513,11 @@ void ImageAlbum::Sobel()
 
 void ImageAlbum::Blur()
 {
+    if(!selectImage){
+        QMessageBox:: critical(this, "경고", "이미지를 선택하세요");
+        return;
+    }
+
     imageScene->clear();
     QImage* image = selectImage;
 
@@ -445,8 +547,6 @@ void ImageAlbum::Blur()
                 QImage::Format_RGB888);
 
     QPixmap buf = QPixmap::fromImage(image_Blur);
-
-//    imageView->setScene(imageScene);
     imageScene->addPixmap(buf.scaled(imageView->width(), imageView->height(),
                                                    Qt::KeepAspectRatio, Qt::SmoothTransformation));
     *selectImage = image_Blur.convertToFormat(QImage::Format_BGR888);
@@ -454,6 +554,11 @@ void ImageAlbum::Blur()
 
 void ImageAlbum::Sharpening()
 {
+    if(!selectImage){
+        QMessageBox:: critical(this, "경고", "이미지를 선택하세요");
+        return;
+    }
+
     imageScene->clear();
     QImage* image = selectImage;
 
@@ -481,8 +586,6 @@ void ImageAlbum::Sharpening()
                 QImage::Format_Grayscale8);
 
     QPixmap buf = QPixmap::fromImage(image_Sharpen);
-
-//    imageView->setScene(imageScene);
     imageScene->addPixmap(buf.scaled(imageView->width(), imageView->height(),
                                                    Qt::KeepAspectRatio, Qt::SmoothTransformation));
     *selectImage = image_Sharpen.convertToFormat(QImage::Format_BGR888);
@@ -494,6 +597,8 @@ void ImageAlbum::on_Prescription_clicked()
     //처방전 작성 버튼 클릭 시 의사 정보, 환자 정보를 처방전 클래스로 전송
     emit sendPrescription(DoctorID, DoctorName, PatientID, PatientName, PatientSex);
     m_prescription->show();
+
+    prescriptionCheck = true;
 }
 
 //환자 정보 클래스에서 받아온 환자 정보를 처방전 클래스로 보내기 위해 멤버 변수에 저장
@@ -517,9 +622,24 @@ void ImageAlbum::receivePrescriptionFinish(QString Data)
     m_prescription->close();
 }
 
+//진료 종료 버튼 클릭 시 해당 환자 정보를 서버에 전송 및 해당 환자의 이미지 파일 삭제
 void ImageAlbum::on_EndTreatment_clicked()
 {
+    if(!prescriptionCheck){
+        QMessageBox:: critical(this, "경고", "처방전을 입력해주세요");
+        return;
+    }
+
     QString Data = "VTF<CR>" + PatientID + "<CR>" + PatientName;
     emit sendEndTreatment(Data);
+
+    QDir dir(QString("./Image/%1").arg(PatientID));
+    dir.removeRecursively();
+
+    //진료 종료 버튼 클릭 시 기존 환자의 사진 담고 있는 listWidget + graphicsView + graphicsScene 클리어
+    ui->listWidget->clear();
+    prescriptionCheck = false;
+    imageView->resetTransform();
+    imageScene->clear();
 }
 

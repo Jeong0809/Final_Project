@@ -36,7 +36,8 @@ public:
         Delete,
         Clear,
         Ceph,
-        Pano
+        Pano,
+        Angle
     };
 
 private:
@@ -54,7 +55,7 @@ private:
 
 
      QGraphicsPathItem* m_pathItem;
-     QList<QGraphicsEllipseItem*> m_itemList;
+     QList<QGraphicsItem*> m_itemList;
      QGraphicsItem* m_currentItem;
      QPointF first;
      QPointF second;
@@ -62,6 +63,7 @@ private:
      QPointF m_startPos;
      QPointF m_endPos;
      int tmp;
+     int point;
      QString inputText;
 
      void addEllipseItem(QPointF, QPointF);
@@ -78,6 +80,9 @@ private slots:
     void ReceiveText(QString);
     void updateSceneeee();
     void ReceiveLength(int, int, int, int);
+
+signals:
+    void SendTypeLength(QString, double);
 
 };
 

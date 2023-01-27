@@ -41,7 +41,7 @@ private:
     QGraphicsView* imageView;
     QListWidgetItem* orignal;
     QImage* origImage;
-    QImage* selectImage;
+    QImage* selectImage = nullptr;
     QImage* origBrightness;
     QColor paintColor;
     int penThickness;
@@ -49,6 +49,8 @@ private:
     ImageScene* imageScene;
 
     Prescription* m_prescription;
+    bool prescriptionCheck;
+
     QString DoctorID;
     QString DoctorName;
     QString PatientID;
@@ -56,8 +58,9 @@ private:
     QString PatientSex;
 
 
+
 public slots:
-    void reloadImages();
+    void reloadImages(QString);
     void selectItem(QListWidgetItem*);
     void ZoomIn();
     void ZoomOut();
@@ -84,6 +87,7 @@ public slots:
     void RectangleItem();
     void TextBox();
     void Length();
+    void Angle();
 
     void receiveDoctorInfo(QString, QString);
     void receivePatientInfo(QString, QString, QString);
@@ -103,6 +107,7 @@ signals:
 private slots:
     void on_Prescription_clicked();
     void on_EndTreatment_clicked();
+    void ReceiveTypeLength(QString, double);
 };
 
 #endif // IMAGEALBUM_H

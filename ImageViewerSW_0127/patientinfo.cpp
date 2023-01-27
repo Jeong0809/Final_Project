@@ -2,6 +2,7 @@
 #include "ui_patientinfo.h"
 
 #include <QMessageBox>
+#include <QFileDialog>
 
 PatientInfo::PatientInfo(QWidget *parent) :
     QWidget(parent), ui(new Ui::PatientInfo)
@@ -39,6 +40,7 @@ void PatientInfo::receiveEndTreatment(QString Data)
     ui->tableWidget->setItem(0, 4, new QTableWidgetItem(""));
 }
 
+//촬영 완료된 환자ID를 받아와 해당 환자의 진행 상황 변경
 void PatientInfo::receivePhotoEnd(QString ID)
 {
     //환자의 ID로 WaitingList에서 검색하여 해당 환자의 진행 상황을 "촬영중"으로 변경
@@ -71,7 +73,7 @@ void PatientInfo::receiveSelectPatient(QString ID, QString data)
 {
     patientID = ID;
     patientName = data.split("|")[0];
-    QString patientSex = data.split("|")[1];
+    patientSex = data.split("|")[1];
     QString patientBirth = data.split("|")[2];
     QString Memo = data.split("|")[3];
 
@@ -80,6 +82,9 @@ void PatientInfo::receiveSelectPatient(QString ID, QString data)
     ui->tableWidget->setItem(0, 2, new QTableWidgetItem(patientSex));
     ui->tableWidget->setItem(0, 3, new QTableWidgetItem(patientBirth));
     ui->tableWidget->setItem(0, 4, new QTableWidgetItem(Memo));
+
+    //대기 리스트에서 선택된 환자 정보를 전송 및 처방전에 환자 정보 띄워주기 위한 시그널
+    emit sendPatientInfo(patientID, patientName, patientSex);
 }
 
 void PatientInfo::receivePMSCameraPatient(QString ID, QString data)
@@ -98,9 +103,9 @@ void PatientInfo::receivePMSCameraPatient(QString ID, QString data)
 //대기 리스트에서 환자가 선택되면 해당 환자ID, 환자 이름을 전송하기 위해 멤버 변수에 저장
 void PatientInfo::on_WaitingList_itemClicked(QTreeWidgetItem *item, int column)
 {
+    Q_UNUSED(column);
     selectPatientID = item->text(0);
     selectPatientName = item->text(1);
-    selectPatientSex = item->text(2);
 }
 
 
@@ -133,8 +138,10 @@ void PatientInfo::on_Treatmentstart_clicked()
     QString Data = "VTS<CR>" + selectPatientID + "<CR>" + "";
     emit sendWaitingPatient(Data);
 
-    //대기 리스트에서 선택된 환자ID, 환자 이름을 전송 및 해당 환자 진료 시작
-    emit sendPatientInfo(selectPatientID, selectPatientName, selectPatientSex);
+
+
+    //진료 시작 버튼 클릭 시 해당 환자의 이미지 업로드
+    emit sendImageFile(selectPatientID);
 }
 
 void PatientInfo::on_Camerastart_clicked()
@@ -174,5 +181,10 @@ void PatientInfo::on_Camerastart_clicked()
         QTreeWidgetItem* c = static_cast<QTreeWidgetItem*>(i);
         c->setText(2, "촬영중");
     }
+
+    /*촬영의뢰 버튼 클릭 시 해당 환자의 이미지 파일이 삭제되고
+        진료 시작을 누를때 다시 생성*/
+    QDir dir(QString("./Image/%1").arg(patientID));
+    dir.removeRecursively();
 }
 

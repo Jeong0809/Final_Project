@@ -56,6 +56,9 @@ MainWindow::MainWindow(QWidget *parent)
     connect(m_networkManager, SIGNAL(sendSelectPatient(QString, QString)), m_patientInfo, SLOT(receiveSelectPatient(QString, QString)));
     connect(m_patientInfo, SIGNAL(sendCameraPatient(QString)), m_networkManager, SLOT(newDataSended(QString)));
 
+    //진료 시작 버튼 클릭 시 리스트 위젯에 해당 환자의 이미지 업로드
+    connect(m_patientInfo, SIGNAL(sendImageFile(QString)), m_imageAlbum, SLOT(reloadImages(QString)));
+
 
     //PMS에서 촬영 의뢰를 눌렀을 시 Viewer의 대기 환자 리스트에서도 환자의 진행 상황을 "촬영중"으로 변경
     connect(m_networkManager, SIGNAL(sendPMSCameraPatient(QString, QString)), m_patientInfo, SLOT(receivePMSCameraPatient(QString, QString)));
