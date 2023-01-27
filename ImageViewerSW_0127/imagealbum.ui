@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>936</width>
-    <height>622</height>
+    <height>645</height>
    </rect>
   </property>
   <property name="cursor">
@@ -23,6 +23,29 @@
    <string>Form</string>
   </property>
   <layout class="QGridLayout" name="gridLayout_2">
+   <item row="1" column="2">
+    <layout class="QHBoxLayout" name="horizontalLayout_2">
+     <item>
+      <widget class="QPushButton" name="Prescription">
+       <property name="text">
+        <string>처방전
+작성</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="EndTreatment">
+       <property name="styleSheet">
+        <string notr="true">QPushButton {background-color: rgb(255, 250, 117)}</string>
+       </property>
+       <property name="text">
+        <string>진료
+종료</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
    <item row="1" column="0">
     <widget class="QListWidget" name="listWidget">
      <property name="minimumSize">
@@ -65,6 +88,9 @@
       <enum>QListView::IconMode</enum>
      </property>
     </widget>
+   </item>
+   <item row="0" column="0">
+    <layout class="QGridLayout" name="gridLayout"/>
    </item>
    <item row="0" column="1">
     <widget class="QSplitter" name="splitter">
@@ -366,32 +392,6 @@
       </layout>
      </widget>
     </widget>
-   </item>
-   <item row="1" column="1">
-    <layout class="QHBoxLayout" name="horizontalLayout_2">
-     <item>
-      <widget class="QPushButton" name="Prescription">
-       <property name="text">
-        <string>처방전
-작성</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QPushButton" name="EndTreatment">
-       <property name="styleSheet">
-        <string notr="true">QPushButton {background-color: rgb(255, 250, 117)}</string>
-       </property>
-       <property name="text">
-        <string>진료
-종료</string>
-       </property>
-      </widget>
-     </item>
-    </layout>
-   </item>
-   <item row="0" column="0">
-    <layout class="QGridLayout" name="gridLayout"/>
    </item>
   </layout>
  </widget>

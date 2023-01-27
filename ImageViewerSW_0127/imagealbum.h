@@ -58,6 +58,9 @@ private:
     QString PatientSex;
 
 
+    QImage image_brightness;
+
+
 
 public slots:
     void reloadImages(QString);
@@ -108,6 +111,8 @@ private slots:
     void on_Prescription_clicked();
     void on_EndTreatment_clicked();
     void ReceiveTypeLength(QString, double);
+    void on_horizontalSlider_sliderReleased();
+    void on_Contrast_editingFinished();
 };
 
 #endif // IMAGEALBUM_H

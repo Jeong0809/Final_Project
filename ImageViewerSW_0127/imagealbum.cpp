@@ -119,6 +119,12 @@ void ImageAlbum::ReceiveTypeLength(QString type, double length)
 
 void ImageAlbum::Angle()
 {
+    //이미지가 선택되지 않았다면 예외처리
+    if(!selectImage){
+        QMessageBox:: critical(this, "경고", "이미지를 선택하세요");
+        return;
+    }
+
     emit SendType(11);
 }
 
@@ -145,6 +151,7 @@ void ImageAlbum::Length()
 
 void ImageAlbum::TextBox()
 {
+    //이미지가 선택되지 않았다면 예외처리
     if(!selectImage){
         QMessageBox:: critical(this, "경고", "이미지를 선택하세요");
         return;
@@ -158,6 +165,7 @@ void ImageAlbum::TextBox()
 
 void ImageAlbum::RectangleItem()
 {
+    //이미지가 선택되지 않았다면 예외처리
     if(!selectImage){
         QMessageBox:: critical(this, "경고", "이미지를 선택하세요");
         return;
@@ -168,6 +176,7 @@ void ImageAlbum::RectangleItem()
 
 void ImageAlbum::Cursor()
 {
+    //이미지가 선택되지 않았다면 예외처리
     if(!selectImage){
         QMessageBox:: critical(this, "경고", "이미지를 선택하세요");
         return;
@@ -178,6 +187,7 @@ void ImageAlbum::Cursor()
 
 void ImageAlbum::DeleteItem()
 {
+    //이미지가 선택되지 않았다면 예외처리
     if(!selectImage){
         QMessageBox:: critical(this, "경고", "이미지를 선택하세요");
         return;
@@ -188,6 +198,7 @@ void ImageAlbum::DeleteItem()
 
 void ImageAlbum::Ellipse()
 {
+    //이미지가 선택되지 않았다면 예외처리
     if(!selectImage){
         QMessageBox:: critical(this, "경고", "이미지를 선택하세요");
         return;
@@ -198,6 +209,7 @@ void ImageAlbum::Ellipse()
 
 void ImageAlbum::Triangle()
 {
+    //이미지가 선택되지 않았다면 예외처리
     if(!selectImage){
         QMessageBox:: critical(this, "경고", "이미지를 선택하세요");
         return;
@@ -208,6 +220,7 @@ void ImageAlbum::Triangle()
 
 void ImageAlbum::Lines()
 {
+    //이미지가 선택되지 않았다면 예외처리
     if(!selectImage){
         QMessageBox:: critical(this, "경고", "이미지를 선택하세요");
         return;
@@ -218,6 +231,7 @@ void ImageAlbum::Lines()
 
 void ImageAlbum::Freehand()
 {
+    //이미지가 선택되지 않았다면 예외처리
     if(!selectImage){
         QMessageBox:: critical(this, "경고", "이미지를 선택하세요");
         return;
@@ -351,7 +365,7 @@ void ImageAlbum::Brightness(int value)
     cvtColor(in, out, cv::COLOR_BGR2GRAY);
     out = out + value;
 
-    QImage image_brightness(
+    image_brightness = QImage(
                 out.data,
                 out.cols,
                 out.rows,
@@ -361,12 +375,19 @@ void ImageAlbum::Brightness(int value)
     QPixmap buf = QPixmap::fromImage(image_brightness);
     imageScene->addPixmap(buf.scaled(imageView->width(), imageView->height(),
                                                    Qt::KeepAspectRatio, Qt::SmoothTransformation));
+}
 
-//    *selectImage = image_brightness.convertToFormat(QImage::Format_BGR888);
+
+void ImageAlbum::on_horizontalSlider_sliderReleased()
+{
+    qDebug() << "Hi";
+    *selectImage = image_brightness.convertToFormat(QImage::Format_BGR888);
 }
 
 void ImageAlbum::HistEqual()
 {
+    ui->Contrast->editingFinished();
+
     if(!selectImage){
         QMessageBox:: critical(this, "경고", "이미지를 선택하세요");
         return;
@@ -467,6 +488,11 @@ void ImageAlbum::Contrast(double value)
     imageScene->addPixmap(buf.scaled(imageView->width(), imageView->height(),
                                                    Qt::KeepAspectRatio, Qt::SmoothTransformation));
 //    *selectImage = image_Contrast.convertToFormat(QImage::Format_BGR888);
+}
+
+void ImageAlbum::on_Contrast_editingFinished()
+{
+    qDebug() << "Hello";
 }
 
 void ImageAlbum::Sobel()
@@ -642,4 +668,9 @@ void ImageAlbum::on_EndTreatment_clicked()
     imageView->resetTransform();
     imageScene->clear();
 }
+
+
+
+
+
 

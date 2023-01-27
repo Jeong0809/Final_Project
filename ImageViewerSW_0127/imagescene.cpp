@@ -65,11 +65,12 @@ void ImageScene::ReceiveType(int type)
         update();
     }
 
-    //Clear : 원본을 눌렀을 때 저장되어있던 원, 사각형, 텍스트 데이터 삭제
+    //Clear : 원본을 눌렀을 때 저장되어있던 원, 사각형, 텍스트, 각도의 삼각형 데이터 삭제
     else if(type == 8){
         m_ellipseList.clear();
         m_rectList.clear();
         m_textList.clear();
+        m_itemList.clear();
     }
 
     //Ceph : 길이 측정
@@ -256,28 +257,27 @@ void ImageScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
     else if(m_drawType == Angle){
         switch (point) {
         case 0: {
-            foreach(auto item, m_itemList)
-                removeItem(item);
-            update();
-            m_itemList.clear();
 
+            if(!m_itemList.empty()){
+                foreach(auto item, m_itemList)
+                    removeItem(item);
+                update();
+            }
+            m_itemList.clear();
 
             first = event->scenePos();
             QGraphicsEllipseItem* item1 = new QGraphicsEllipseItem();
-            item1->setFlags(QGraphicsItem::ItemIsMovable | QGraphicsItem::ItemIsSelectable);
             item1->setBrush(QBrush(QColor(m_penColor), Qt::SolidPattern));
             item1->setRect(first.x()-ItemWidth/2, first.y()-ItemWidth/2, ItemWidth, ItemWidth);
             item1->setTransformOriginPoint(ItemWidth/2, ItemWidth/2);
             addItem(item1);
             m_itemList.append(item1);
-
             break;
         }
 
         case 1: {
             second = event->scenePos();
             QGraphicsEllipseItem* item1 = new QGraphicsEllipseItem();
-            item1->setFlags(QGraphicsItem::ItemIsMovable | QGraphicsItem::ItemIsSelectable);
             item1->setBrush(QBrush(QColor(m_penColor), Qt::SolidPattern));
             item1->setRect(second.x()-ItemWidth/2, second.y()-ItemWidth/2, ItemWidth, ItemWidth);
             item1->setTransformOriginPoint(ItemWidth/2, ItemWidth/2);
@@ -286,7 +286,7 @@ void ImageScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
 
             QPainterPath path(first);
             path.quadTo(first, second);
-            QGraphicsPathItem* line = addPath(path, QPen(Qt::red, 2,
+            QGraphicsPathItem* line = addPath(path, QPen(Qt::yellow, 2,
                                                          Qt::SolidLine, Qt::RoundCap));
             m_itemList.append(line);
             break;
@@ -295,7 +295,6 @@ void ImageScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
         case 2: {
             third = event->scenePos();
             QGraphicsEllipseItem* item1 = new QGraphicsEllipseItem();
-            item1->setFlags(QGraphicsItem::ItemIsMovable | QGraphicsItem::ItemIsSelectable);
             item1->setBrush(QBrush(QColor(m_penColor), Qt::SolidPattern));
             item1->setRect(third.x()-ItemWidth/2, third.y()-ItemWidth/2, ItemWidth, ItemWidth);
             item1->setTransformOriginPoint(ItemWidth/2, ItemWidth/2);
@@ -305,7 +304,7 @@ void ImageScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
 
             QPainterPath path(second);
             path.quadTo(second, third);
-            QGraphicsPathItem* line = addPath(path, QPen(Qt::red, 2,
+            QGraphicsPathItem* line = addPath(path, QPen(Qt::yellow, 2,
                                                          Qt::SolidLine, Qt::RoundCap));
             m_itemList.append(line);
             break;
@@ -315,19 +314,14 @@ void ImageScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
         point++;
         if(point >= 3)
         {
-            if(!((third.x() == first.x() && third.y() == first.y()) ||
-                 (second.x() == third.x() && second.y() == third.y()))){
-                double Radian = atan((second.y() - third.y()) / (second.x() - third.x()))
-                        - atan((first.y() - third.y()) / (first.x() - third.x()));
-
-                double Degree = floor(qRadiansToDegrees(Radian));
-
-                qDebug() << Degree;
-            }
+            double A = sqrt(pow(first.x() - third.x(), 2) + pow(first.y() - third.y(), 2));
+            double B = sqrt(pow(first.x() - second.x(), 2) + pow(first.y() - second.y(), 2));
+            double C = sqrt(pow(second.x() - third.x(), 2) + pow(second.y() - third.y(), 2));
+            double Degree = acos((pow(B, 2) + pow(C, 2) - pow(A, 2)) / (2 * B * C));
+            Degree = Degree * (180 / M_PI);
+            qDebug() << Degree;
             point = 0;
         }
-
-
     }
 
     QGraphicsScene::mousePressEvent(event);
@@ -426,7 +420,6 @@ void ImageScene::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
         break;
 
     case Rectangle: {
-        qDebug("네모 움직임");
         if(m_currentItem != nullptr)
             delete m_currentItem;
         QRectF rect(m_startPos, event->scenePos());
@@ -438,7 +431,6 @@ void ImageScene::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
         break;
 
     case Ellipse: {
-        qDebug("동그라미 움직임");
         if(m_currentItem != nullptr)
             delete m_currentItem;
         QRectF rect(m_startPos, event->scenePos());
@@ -450,11 +442,9 @@ void ImageScene::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
         break;
 
     case Text:
-        qDebug("텍스트 움직임");
         break;
 
     case Ceph: {
-        qDebug("길이 측정");
         if(m_currentItem != nullptr)
             delete m_currentItem;
         QLineF line(m_startPos, event->scenePos());
@@ -466,14 +456,10 @@ void ImageScene::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
         double length = qSqrt(qPow((m_startPos.x() - event->scenePos().x())*xRate, 2)
                                + qPow((m_startPos.y() - event->scenePos().y())*yRate, 2)) * 0.08733;
         emit SendTypeLength("Ceph", length);
-
-        qDebug() << qSqrt(qPow((m_startPos.x() - event->scenePos().x())*xRate, 2)
-                    + qPow((m_startPos.y() - event->scenePos().y())*yRate, 2)) * 0.08733 <<"mm";
     }
         break;
 
     case Pano: {
-        qDebug("길이 측정");
         if(m_currentItem != nullptr)
             delete m_currentItem;
         QLineF line(m_startPos, event->scenePos());
@@ -485,12 +471,8 @@ void ImageScene::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
         double length = qSqrt(qPow((m_startPos.x() - event->scenePos().x())*xRate, 2)
                                + qPow((m_startPos.y() - event->scenePos().y())*yRate, 2)) * 0.096358;
         emit SendTypeLength("Pano", length);
-
-        qDebug() << qSqrt(qPow((m_startPos.x() - event->scenePos().x())*xRate, 2)
-                    + qPow((m_startPos.y() - event->scenePos().y())*yRate, 2)) * 0.096358 <<"mm";
     }
         break;
-
 
     case Cursor: {
         //커서 모드일 때 선택된 원형 이동
@@ -507,6 +489,7 @@ void ImageScene::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
             }
         }
 
+        //커서 모드일 때 선택된 텍스트 이동
         foreach(auto item, m_textList) {
             if(item->isSelected()){
                 item->setFlags(QGraphicsItem::ItemIsMovable);
@@ -517,7 +500,6 @@ void ImageScene::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 
     default:
         break;
-
     }
 
     QGraphicsScene::mouseMoveEvent(event);
