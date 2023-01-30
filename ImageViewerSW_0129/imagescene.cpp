@@ -28,6 +28,15 @@ ImageScene::ImageScene(QWidget *parent)
 
 void ImageScene::ReceiveType(int type)
 {
+    //각도를 위한 삼각형 데이터는 다른 버튼 클릭 시 바로 삭제
+    if(!m_itemList.empty()){
+        foreach(auto item, m_itemList)
+            removeItem(item);
+        update();
+    }
+    m_itemList.clear();
+
+
     if(type == 0){
         m_drawType = Lines;
     }
@@ -37,7 +46,7 @@ void ImageScene::ReceiveType(int type)
     }
 
     else if(type == 2){
-        m_drawType = Triangle;
+        m_drawType = Laser;
         tmp = 0;
     }
 
@@ -65,12 +74,11 @@ void ImageScene::ReceiveType(int type)
         update();
     }
 
-    //Clear : 원본을 눌렀을 때 저장되어있던 원, 사각형, 텍스트, 각도의 삼각형 데이터 삭제
+    //Clear : 원본을 눌렀을 때 저장되어있던 원, 사각형, 텍스트 데이터 삭제
     else if(type == 8){
         m_ellipseList.clear();
         m_rectList.clear();
         m_textList.clear();
-        m_itemList.clear();
     }
 
     //Ceph : 길이 측정
@@ -151,74 +159,8 @@ void ImageScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
         m_pathList.append(item);
     }
 
-    else if(m_drawType == Triangle){
+    else if(m_drawType == Laser){
 
-        switch (tmp) {
-        case 0: {
-            first = event->scenePos();
-            QGraphicsEllipseItem* item1 = new QGraphicsEllipseItem();
-            item1->setFlags(QGraphicsItem::ItemIsMovable | QGraphicsItem::ItemIsSelectable);
-            item1->setBrush(QBrush(QColor(m_penColor), Qt::SolidPattern));
-            item1->setRect(first.x()-ItemWidth/2, first.y()-ItemWidth/2, ItemWidth, ItemWidth);
-            item1->setTransformOriginPoint(ItemWidth/2, ItemWidth/2);
-
-            addItem(item1);
-            m_itemList.append(item1);
-            break;
-        }
-
-        case 1: {
-            second = event->scenePos();
-            QGraphicsEllipseItem* item1 = new QGraphicsEllipseItem();
-            item1->setFlags(QGraphicsItem::ItemIsMovable | QGraphicsItem::ItemIsSelectable);
-            item1->setBrush(QBrush(QColor(m_penColor), Qt::SolidPattern));
-            item1->setRect(second.x()-ItemWidth/2, second.y()-ItemWidth/2, ItemWidth, ItemWidth);
-            item1->setTransformOriginPoint(ItemWidth/2, ItemWidth/2);
-
-            addItem(item1);
-            m_itemList.append(item1);
-
-
-            QPainterPath path(first);
-            path.quadTo(first, second);
-            QGraphicsPathItem* line = addPath(path, QPen(Qt::red, 2,
-                                                         Qt::SolidLine, Qt::RoundCap));
-            line->setFlags(QGraphicsItem::ItemIsMovable | QGraphicsItem::ItemIsSelectable);
-            break;
-        }
-
-        case 2: {
-            third = event->scenePos();
-            QGraphicsEllipseItem* item1 = new QGraphicsEllipseItem();
-            item1->setFlags(QGraphicsItem::ItemIsMovable | QGraphicsItem::ItemIsSelectable);
-            item1->setBrush(QBrush(QColor(m_penColor), Qt::SolidPattern));
-            item1->setRect(third.x()-ItemWidth/2, third.y()-ItemWidth/2, ItemWidth, ItemWidth);
-            item1->setTransformOriginPoint(ItemWidth/2, ItemWidth/2);
-
-            addItem(item1);
-            m_itemList.append(item1);
-
-            QPainterPath path(second);
-            path.quadTo(second, third);
-            QGraphicsPathItem* line = addPath(path, QPen(Qt::red, 2,
-                                                         Qt::SolidLine, Qt::RoundCap));
-            line->setFlags(QGraphicsItem::ItemIsMovable | QGraphicsItem::ItemIsSelectable);
-
-
-            QPainterPath path1(third);
-            path1.quadTo(third, first);
-            QGraphicsPathItem* line1 = addPath(path1, QPen(Qt::red, 2,
-                                                          Qt::SolidLine, Qt::RoundCap));
-            line1->setFlags(QGraphicsItem::ItemIsMovable | QGraphicsItem::ItemIsSelectable);
-            break;
-        }
-        }
-
-        tmp++;
-        if(tmp >= 3)
-        {
-            tmp = 0;
-        }
     }
 
     else if(m_drawType == FreeHand){
@@ -319,7 +261,7 @@ void ImageScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
             double C = sqrt(pow(second.x() - third.x(), 2) + pow(second.y() - third.y(), 2));
             double Degree = acos((pow(B, 2) + pow(C, 2) - pow(A, 2)) / (2 * B * C));
             Degree = Degree * (180 / M_PI);
-            qDebug() << Degree;
+            emit SendMeasurement("Angle", Degree);
             point = 0;
         }
     }
@@ -364,6 +306,10 @@ void ImageScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
         }
         break;
     }
+
+    case Laser:
+        break;
+
     case FreeHand: {
         if(m_isDrawable) {
             QGraphicsPathItem* item = m_pathList.last();
@@ -407,6 +353,10 @@ void ImageScene::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
     }
         break;
 
+    case Laser:
+        break;
+
+
     case FreeHand: {
         if(m_isDrawable) {
             QGraphicsPathItem* item = m_pathList.last();
@@ -441,7 +391,15 @@ void ImageScene::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
     }
         break;
 
-    case Text:
+    case Text: {
+            if(m_currentItem != nullptr)
+                delete m_currentItem;
+            QRectF rect(m_startPos, event->scenePos());
+            QGraphicsRectItem *item = new QGraphicsRectItem(rect);
+            item->setPen(QPen(QColor(Qt::yellow), 2));
+            addItem(item);
+            m_currentItem = item;
+        }
         break;
 
     case Ceph: {
@@ -455,7 +413,7 @@ void ImageScene::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 
         double length = qSqrt(qPow((m_startPos.x() - event->scenePos().x())*xRate, 2)
                                + qPow((m_startPos.y() - event->scenePos().y())*yRate, 2)) * 0.08733;
-        emit SendTypeLength("Ceph", length);
+        emit SendMeasurement("Ceph", length);
     }
         break;
 
@@ -470,7 +428,7 @@ void ImageScene::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 
         double length = qSqrt(qPow((m_startPos.x() - event->scenePos().x())*xRate, 2)
                                + qPow((m_startPos.y() - event->scenePos().y())*yRate, 2)) * 0.096358;
-        emit SendTypeLength("Pano", length);
+        emit SendMeasurement("Pano", length);
     }
         break;
 
@@ -501,9 +459,9 @@ void ImageScene::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
     default:
         break;
     }
-
     QGraphicsScene::mouseMoveEvent(event);
 }
+
 
 void ImageScene::addEllipseItem(QPointF stPos, QPointF edPos)
 {
@@ -530,36 +488,13 @@ void ImageScene::addRectItem(QPointF stPos, QPointF edPos)
 void ImageScene::addTextItem(QPointF stPos)
 {
     QGraphicsSimpleTextItem *textItem = new QGraphicsSimpleTextItem(inputText);
+    QFont newFont("Courier", m_penThickness, QFont::Bold, false);
     textItem->setFlags(QGraphicsItem::ItemIsSelectable);
     textItem->setPos(stPos);
+    textItem->setFont(newFont);
+    textItem->setBrush(m_penColor);
     addItem(textItem);
     m_textList.append(textItem);
-}
-
-void ImageScene::updateSceneeee()
-{
-//    qDebug("updateScene");
-//    QPen pen(m_penColor, m_penThickness);
-//    m_pathItem->setPen(pen);
-//    //    m_pathItem->setBrush(Qt::transparent);
-//    QPainterPath path = m_pathItem->path();
-
-//    int cnt = 0;
-//    path.clear();
-//    if(tmp >= 3){
-//        foreach(auto item, m_itemList) {
-//            //        qDebug() << item->scenePos();
-//            QPointF p = item->scenePos();
-//            if(cnt++ == 0) {
-//                path.moveTo(p.rx()+ItemWidth/2, p.ry()+ItemWidth/2);
-//            } else {
-//                path.lineTo(p.rx()+ItemWidth/2, p.ry()+ItemWidth/2);
-//            }
-
-//        }
-//        path.closeSubpath();
-//        m_pathItem->setPath(path);
-//    }
 }
 
 //void ImageScene::wheelEvent(QGraphicsSceneWheelEvent *event)

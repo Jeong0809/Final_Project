@@ -33,6 +33,7 @@ ImageAlbum::ImageAlbum(QWidget *parent)
     //초깃값 설정
     prescriptionCheck = false;
     ui->LengthResult->setReadOnly(true);
+    ui->AngleResult->setReadOnly(true);
 
     imageView->setGeometry(6, 6, 600, 600);
     imageView->setSizeAdjustPolicy(QAbstractScrollArea::AdjustToContents);
@@ -50,7 +51,7 @@ ImageAlbum::ImageAlbum(QWidget *parent)
     connect(ui->Brush, SIGNAL(clicked()), this, SLOT(BrushColor()));
     connect(ui->OrigImage, SIGNAL(clicked()), this, SLOT(OrigImage()));
     connect(ui->horizontalSlider, SIGNAL(valueChanged(int)), this, SLOT(Brightness(int)));
-    connect(ui->Sobel, SIGNAL(clicked()), this, SLOT(Sobel()));
+//    connect(ui->Sobel, SIGNAL(clicked()), this, SLOT(Sobel()));
     connect(ui->VReverse, SIGNAL(clicked()), this, SLOT(VReverse()));
     connect(ui->HReverse, SIGNAL(clicked()), this, SLOT(HReverse()));
     connect(ui->Blur, SIGNAL(clicked()), this, SLOT(Blur()));
@@ -61,7 +62,7 @@ ImageAlbum::ImageAlbum(QWidget *parent)
     connect(ui->Thickness, SIGNAL(valueChanged(int)), this, SLOT(Thickness(int)));
     connect(ui->Lines, SIGNAL(clicked()), this, SLOT(Lines()));
     connect(ui->Freehand, SIGNAL(clicked()), this, SLOT(Freehand()));
-    connect(ui->Triangle, SIGNAL(clicked()), this, SLOT(Triangle()));
+    connect(ui->Laser, SIGNAL(clicked()), this, SLOT(Laser()));
     connect(ui->Cursor, SIGNAL(clicked()), this, SLOT(Cursor()));
     connect(ui->Delete, SIGNAL(clicked()), this, SLOT(DeleteItem()));
     connect(ui->Ellipse, SIGNAL(clicked()), this, SLOT(Ellipse()));
@@ -69,6 +70,8 @@ ImageAlbum::ImageAlbum(QWidget *parent)
     connect(ui->TextBox, SIGNAL(clicked()), this, SLOT(TextBox()));
     connect(ui->LengthMeasurement, SIGNAL(clicked()), this, SLOT(Length()));
     connect(ui->Angle, SIGNAL(clicked()), this, SLOT(Angle()));
+    connect(ui->Copy, SIGNAL(clicked()), this, SLOT(Copy()));
+    connect(ui->Paste, SIGNAL(clicked()), this, SLOT(Paste()));
 
     /*GraphicsView에 펜 색상, 펜 두께, 선인지 도형인지를 구분하여 시그널 전송*/
     connect(this, SIGNAL(SendThickness(int)), imageScene, SLOT(ReceiveThickness(int)));
@@ -78,7 +81,7 @@ ImageAlbum::ImageAlbum(QWidget *parent)
     connect(this, SIGNAL(SendLength(int, int, int, int)), imageScene, SLOT(ReceiveLength(int, int, int, int)));
 
     //GraphicsSCene에서 측정한 길이를 위젯 화면에 보여주기 위한 시그널-슬롯
-    connect(imageScene, SIGNAL(SendTypeLength(QString, double)), this, SLOT(ReceiveTypeLength(QString, double)));
+    connect(imageScene, SIGNAL(SendMeasurement(QString, double)), this, SLOT(ReceiveMeasurement(QString, double)));
 
     //처방전 작성 버튼 클릭 시 처방전 클래스로 의사 정보, 환자 정보를 전송
     connect(this, SIGNAL(sendPrescription(QString, QString, QString, QString, QString)),
@@ -111,10 +114,16 @@ void ImageAlbum::reloadImages(QString ID)
     };
 }
 
-void ImageAlbum::ReceiveTypeLength(QString type, double length)
+void ImageAlbum::ReceiveMeasurement(QString type, double length)
 {
-    QString Result = QString::number(length);
-    ui->LengthResult->setText(type + " " + Result + " mm");
+    if(type == "Angle"){
+        QString Result = QString::number(length);
+        ui->AngleResult->setText(Result + "°");
+    }
+    else {
+        QString Result = QString::number(length);
+        ui->LengthResult->setText(type + " " + Result + " mm");
+    }
 }
 
 void ImageAlbum::Angle()
@@ -174,6 +183,28 @@ void ImageAlbum::RectangleItem()
     emit SendType(5);
 }
 
+void ImageAlbum::Copy()
+{
+    //이미지가 선택되지 않았다면 예외처리
+    if(!selectImage){
+        QMessageBox:: critical(this, "경고", "이미지를 선택하세요");
+        return;
+    }
+
+    emit SendType(12);
+}
+
+void ImageAlbum::Paste()
+{
+    //이미지가 선택되지 않았다면 예외처리
+    if(!selectImage){
+        QMessageBox:: critical(this, "경고", "이미지를 선택하세요");
+        return;
+    }
+
+    emit SendType(13);
+}
+
 void ImageAlbum::Cursor()
 {
     //이미지가 선택되지 않았다면 예외처리
@@ -207,7 +238,7 @@ void ImageAlbum::Ellipse()
     emit SendType(4);
 }
 
-void ImageAlbum::Triangle()
+void ImageAlbum::Laser()
 {
     //이미지가 선택되지 않았다면 예외처리
     if(!selectImage){
@@ -295,6 +326,7 @@ void ImageAlbum::OrigImage()
 
 void ImageAlbum::selectItem(QListWidgetItem* item)
 {
+    emit SendType(8);
     orignal = item;
     origImage = new QImage(ui->listWidget->currentItem()->statusTip());
     selectImage = new QImage(ui->listWidget->currentItem()->statusTip());
@@ -585,7 +617,7 @@ void ImageAlbum::Sharpening()
         return;
     }
 
-    imageScene->clear();
+    imageScene->update();
     QImage* image = selectImage;
 
     //OpenCV에서 이미지 작업을 하기 위해서 Matrix 타입으로 만들기 위해서 이미지 변환 작업을 해줍니다.
@@ -623,8 +655,6 @@ void ImageAlbum::on_Prescription_clicked()
     //처방전 작성 버튼 클릭 시 의사 정보, 환자 정보를 처방전 클래스로 전송
     emit sendPrescription(DoctorID, DoctorName, PatientID, PatientName, PatientSex);
     m_prescription->show();
-
-    prescriptionCheck = true;
 }
 
 //환자 정보 클래스에서 받아온 환자 정보를 처방전 클래스로 보내기 위해 멤버 변수에 저장
@@ -645,6 +675,7 @@ void ImageAlbum::receiveDoctorInfo(QString ID, QString Name)
 void ImageAlbum::receivePrescriptionFinish(QString Data)
 {
     emit sendPrescriptiontoServer(Data);
+    prescriptionCheck = true;
     m_prescription->close();
 }
 

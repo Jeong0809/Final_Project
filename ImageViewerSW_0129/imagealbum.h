@@ -83,7 +83,7 @@ public slots:
     void Thickness(int);
     void Lines();
     void Freehand();
-    void Triangle();
+    void Laser();
     void Cursor();
     void DeleteItem();
     void Ellipse();
@@ -91,6 +91,8 @@ public slots:
     void TextBox();
     void Length();
     void Angle();
+    void Copy();
+    void Paste();
 
     void receiveDoctorInfo(QString, QString);
     void receivePatientInfo(QString, QString, QString);
@@ -110,7 +112,7 @@ signals:
 private slots:
     void on_Prescription_clicked();
     void on_EndTreatment_clicked();
-    void ReceiveTypeLength(QString, double);
+    void ReceiveMeasurement(QString, double);
     void on_horizontalSlider_sliderReleased();
     void on_Contrast_editingFinished();
 };
