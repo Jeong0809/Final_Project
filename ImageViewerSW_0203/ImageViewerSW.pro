@@ -32,6 +32,7 @@ FORMS += \
     imagealbum.ui \
     loginform.ui \
     mainwindow.ui \
+    mainwindow.ui \
     patientinfo.ui \
     prescription.ui
 
