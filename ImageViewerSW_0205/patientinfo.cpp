@@ -109,6 +109,25 @@ PatientInfo::~PatientInfo()
     delete ui;
 }
 
+//뷰어SW 로그인 시 기존 환자 대기 리스트를 불러와 띄워줌
+void PatientInfo::receiveWaitTreatment(QString data)
+{
+    QTreeWidgetItem* item = new QTreeWidgetItem;
+
+    while(1){
+
+        QString ID = data.split("|")[0];
+        QString Name = data.split("|")[1];
+        QString Status = data.split("<r>")[2];
+
+        ui->WaitingList->addTopLevelItem(item);
+        item->setText(0, ID);
+        item->setText(1, Name);
+        item->setText(2, Status);
+    }
+
+}
+
 //진료 완료 버튼 클릭 시 해당 환자의 정보 받음
 void PatientInfo::receiveEndTreatment(QString Data)
 {

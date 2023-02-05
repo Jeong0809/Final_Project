@@ -40,6 +40,7 @@ private slots:
     void receiveDoctorName(QString, QString);
     void receivePhotoEnd(QString);
     void receiveEndTreatment(QString);
+    void receiveWaitTreatment(QString);
     void receiveEndSignal();
     void receiveAllImageFileP(bool);
 

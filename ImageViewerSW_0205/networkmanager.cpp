@@ -235,6 +235,11 @@ void NetworkManager::receiveData()
         {
             emit sendPhotoEnd(id);
         }
+
+        else if(event == "WTR")
+        {
+            emit sendWaitTreatment(data);
+        }
     }
 }
 

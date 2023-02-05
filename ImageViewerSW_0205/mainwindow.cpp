@@ -56,6 +56,9 @@ MainWindow::MainWindow(QWidget *parent)
     connect(m_networkManager, SIGNAL(sendSelectPatient(QString, QString)), m_patientInfo, SLOT(receiveSelectPatient(QString, QString)));
     connect(m_patientInfo, SIGNAL(sendCameraPatient(QString)), m_networkManager, SLOT(newDataSended(QString)));
 
+    //뷰어 SW 로그인 시 기존에 추가되어있던 대기 리스트 환자 목록을 받아와 띄워주기 위한 시그널-슬롯
+    connect(m_networkManager, SIGNAL(sendWaitTreatment(QString)), m_patientInfo, SLOT(receiveWaitTreatment(QString)));
+
     //진료 시작 버튼 클릭 시 리스트 위젯에 해당 환자의 이미지 업로드
     connect(m_networkManager, SIGNAL(sendImageFile()), m_imageAlbum, SLOT(reloadImages()));
 

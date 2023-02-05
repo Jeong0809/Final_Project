@@ -42,6 +42,7 @@ signals:
     void sendPMSCameraPatient(QString, QString);
     void sendLogInCheck(QString);
     void sendPhotoEnd(QString);
+    void sendWaitTreatment(QString);
     void sendImageFile();
     void sendAllImageFile(bool);
 };
