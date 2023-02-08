@@ -70,6 +70,7 @@ private:
      QPointF m_endPos;
      QString inputText;
      QString imageType;
+     QString m_implantImage;
 
      void addEllipseItem(QPointF, QPointF);
      void addRectItem(QPointF, QPointF);
@@ -83,6 +84,7 @@ private slots:
     void ReceiveText(QString);
     void ReceiveLength(int, int, int, int, QString);
     void ReceiveFontSize(int);
+    void ReceiveImplantType(int);
 
 signals:
     void SendMeasurement(QString, double);

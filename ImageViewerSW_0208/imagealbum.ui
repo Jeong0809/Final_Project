@@ -975,7 +975,7 @@ border-style: solid gray;
            </property>
            <layout class="QGridLayout" name="gridLayout_7">
             <item row="0" column="0">
-             <widget class="QComboBox" name="comboBox">
+             <widget class="QComboBox" name="ImplantcomboBox">
               <item>
                <property name="text">
                 <string>어금니</string>

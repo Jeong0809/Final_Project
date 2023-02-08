@@ -120,18 +120,19 @@ signals:
     void SendLength(int, int, int, int, QString);
     void SendFontSize(int);
     void sendEndSignal();
+    void sendImplantType(int);
 
 private slots:
     void on_Prescription_clicked();
     void on_EndTreatment_clicked();
     void ReceiveMeasurement(QString, double);
-    void on_tabWidget_tabBarClicked(int index);
     void ReceiveCapturePos(QPointF, QPointF);
     void on_Fontsize_valueChanged(int arg1);
     void receiveCameraStart();
     void on_Brightness_sliderReleased();
     void on_Contrast_sliderReleased();
     void on_Gamma_sliderReleased();
+    void on_ImplantcomboBox_activated(int index);
 };
 
 #endif // IMAGEALBUM_H
