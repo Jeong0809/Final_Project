@@ -23,6 +23,7 @@ ImageScene::ImageScene(QWidget *parent)
     m_drawType = Laser;
     m_currentItem = nullptr;
     point = 0;
+    m_implantImage = "./Icon/ImplantImage.png";
     update();
 }
 
@@ -267,13 +268,22 @@ void ImageScene::ReceiveLength(int origWidth, int origHeight, int sceneWidth, in
     imageType = type;
 }
 
+void ImageScene::ReceiveImplantType(int index)
+{
+    if(index == 0){
+        m_implantImage = "./Icon/ImplantImage.png";
+    }
+
+    else {
+        m_implantImage = "./Icon/implant3.png";
+    }
+}
+
 int ImageScene::GetDistance(QPointF pt1, QPointF pt2)
 {
  return (float)sqrt(pow((float)(pt1.x() - pt2.x()), 2)
   + pow((float)(pt1.y() - pt2.y()), 2));
 }
-
-
 
 void ImageScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
@@ -489,7 +499,7 @@ void ImageScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
              int width = (int)((ss*2)/height);
 
             QRectF rect = QRectF(first, QSizeF(width, height)).normalized();
-            QPixmap pixmap("./Icon/implant3.png");
+            QPixmap pixmap(m_implantImage);
             QGraphicsPixmapItem *pixItem = new QGraphicsPixmapItem(pixmap.scaled(rect.size().toSize(), Qt::IgnoreAspectRatio));
             QTransform transform;
             pixItem->setPos(first);

@@ -228,6 +228,9 @@ ImageAlbum::ImageAlbum(QWidget *parent)
     //처방전 클래스에서 처방전 작성 완료 되면 해당 내용을 서버로 보내주기 위한 과정
     connect(m_prescription, SIGNAL(sendPrescriptionFinish(QString)), this, SLOT(receivePrescriptionFinish(QString)));
 
+    //콤보박스를 통해 임플란트 타입 선택 시 해당 타입에 따라 다른 임플란트가 식립되도록 하기 위한 시그널-슬롯
+    connect(this, SIGNAL(sendImplantType(int)), imageScene, SLOT(ReceiveImplantType(int)));
+
     reloadImages();
 }
 
@@ -456,6 +459,7 @@ void ImageAlbum::OrigImage()
     ui->AngleResult->clear();
 
     selectImage = QPixmap(orignal->statusTip()).toImage();
+    Histogram();
 
     imageScene->clear();
     QSize size = imageView->viewport()->size();
@@ -510,6 +514,7 @@ void ImageAlbum::VReverse()
     }
 
     selectImage.mirror(true, false);
+    Histogram();
 
     QSize size = imageView->viewport()->size();
     QPixmap buf = QPixmap::fromImage(selectImage);
@@ -532,6 +537,7 @@ void ImageAlbum::HReverse()
     }
 
     selectImage.mirror(false, true);
+    Histogram();
 
     QSize size = imageView->viewport()->size();
     QPixmap buf = QPixmap::fromImage(selectImage);
@@ -559,32 +565,18 @@ void ImageAlbum::ReceiveCapturePos(QPointF startPos, QPointF endPos)
 
     //원본 이미지에서 주어진 사각형의 사이즈만큼 잘라서 확인
     QPixmap buf = imageView->grab(rect);
-//    imageScene->clear();
+    imageScene->clear();
 
     QImage image_capture = buf.toImage();
-//    QSize size = imageView->viewport()->size();
-//    QGraphicsItem *i = imageScene->addPixmap(buf.scaled(size, Qt::KeepAspectRatio, Qt::SmoothTransformation));
-//    i->setToolTip("GraphicsScene");
-//    imageView->setAlignment(Qt::AlignCenter);
-//    imageScene->setSceneRect(i->sceneBoundingRect());
-//    selectImage = image_capture.convertToFormat(QImage::Format_Grayscale8).copy();
-
-    selectImage = image_capture.convertToFormat(QImage::Format_Grayscale8).copy();
-
     QSize size = imageView->viewport()->size();
+    QGraphicsItem *i = imageScene->addPixmap(buf.scaled(size, Qt::KeepAspectRatio, Qt::SmoothTransformation));
+    i->setToolTip("GraphicsScene");
     imageView->setAlignment(Qt::AlignCenter);
-
-    foreach(auto item, imageScene->items()) {
-        QGraphicsPixmapItem *i = dynamic_cast<QGraphicsPixmapItem*>(item);
-        if(i != nullptr && i->toolTip() == "GraphicsScene") {
-            i->setPixmap(buf.scaled(size, Qt::KeepAspectRatio, Qt::SmoothTransformation));
-            imageScene->setSceneRect(i->sceneBoundingRect());
-            qDebug() << i->sceneBoundingRect();
-        }
-    }
+    imageScene->setSceneRect(i->sceneBoundingRect());
     selectImage = image_capture.convertToFormat(QImage::Format_Grayscale8).copy();
+    Histogram();
 
-    emit SendType(2);
+    emit SendType(8);
 }
 
 void ImageAlbum::Brightness(int value)
@@ -639,6 +631,7 @@ void ImageAlbum::on_Brightness_sliderReleased()
 {
     Brightvalue = ui->Brightness->value();
     selectImage = image_brightness.convertToFormat(selectImage.format()).copy();
+    Histogram();
 }
 
 void ImageAlbum::HistEqual()
@@ -647,7 +640,6 @@ void ImageAlbum::HistEqual()
         QMessageBox:: critical(this, "경고", "이미지를 선택하세요");
         return;
     }
-
 
     QImage image = selectImage.convertToFormat(QImage::Format_Grayscale8);
 
@@ -766,6 +758,7 @@ void ImageAlbum::Reverse()
         }
     }
     selectImage = image_Reverse.convertToFormat(selectImage.format()).copy();
+    Histogram();
 }
 
 void ImageAlbum::Contrast(int value)
@@ -809,6 +802,7 @@ void ImageAlbum::Contrast(int value)
 void ImageAlbum::on_Contrast_sliderReleased()
 {
     selectImage = image_Contrast.convertToFormat(selectImage.format()).copy();
+    Histogram();
 }
 
 void ImageAlbum::Blur()
@@ -860,6 +854,7 @@ void ImageAlbum::Blur()
         }
     }
     selectImage = image_Blur.convertToFormat(selectImage.format()).copy();
+    Histogram();
 }
 
 void ImageAlbum::Sharpening()
@@ -911,6 +906,7 @@ void ImageAlbum::Sharpening()
     }
 
     selectImage = image_Sharpen.convertToFormat(selectImage.format()).copy();
+    Histogram();
 }
 
 void ImageAlbum::Gamma(int value)
@@ -959,6 +955,7 @@ void ImageAlbum::Gamma(int value)
 void ImageAlbum::on_Gamma_sliderReleased()
 {
     selectImage = image_Gamma.convertToFormat(selectImage.format()).copy();
+    Histogram();
 }
 
 void ImageAlbum::on_Prescription_clicked()
@@ -1013,7 +1010,6 @@ void ImageAlbum::on_EndTreatment_clicked()
     ui->EndTreatment->setDisabled(true);
     ui->Prescription->setDisabled(true);
 
-
     //진료 종료 시 해당하는 환자 정보(ID, 이름)를 서버로 전송
     QString Data = "VTF<CR>" + PatientID + "<CR>" + PatientName;
     emit sendEndTreatment(Data);
@@ -1031,48 +1027,14 @@ void ImageAlbum::on_EndTreatment_clicked()
 
     //다음 환자의 이미지 파일 수신이 완료 되면 다시 true로 변경
     AllSendImageCheck = false;
+
+    ui->Brightness->setSliderPosition(0);
+    ui->Contrast->setSliderPosition(10);
+    ui->Gamma->setSliderPosition(10);
+    ui->LengthResult->clear();
+    ui->AngleResult->clear();
     imageView->resetTransform();
     imageScene->clear();
-}
-
-
-void ImageAlbum::on_tabWidget_tabBarClicked(int index)
-{
-    if(index == 0){
-        if(selectImage.isNull()){
-            return;
-        }
-        emit SendType(15);
-    }
-
-//    //도형, 텍스트, 펜 그리기 이후 도구 탭 이동 시 원본으로 초기화
-//    if(index == 0){
-//        if(selectImage.isNull()){
-//            return;
-//        }
-//        emit SendType(8);
-
-////        imageScene->addItem()
-
-//        imageView->resetTransform();
-//        imageScene->clear();
-//        imageScene->setBackgroundBrush(Qt::white);
-//        ui->Brightness->setSliderPosition(0);
-//        ui->Contrast->setValue(1.0);
-//        ui->LengthResult->clear();
-//        ui->AngleResult->clear();
-
-//        selectImage = QPixmap(orignal->statusTip()).toImage();
-//        QSize size = imageView->viewport()->size();
-//        QGraphicsItem *i = imageScene->addPixmap(QPixmap(orignal->statusTip()).scaled(size, Qt::KeepAspectRatio, Qt::SmoothTransformation));
-//        imageView->setAlignment(Qt::AlignCenter);
-//        imageScene->setSceneRect(i->sceneBoundingRect());
-//    }
-
-//    //필터링 후 탭 이동 시 그려져있던 레이저 삭제
-//    else if(index == 1) {
-//        emit SendType(8);
-//    }
 }
 
 //스핀박스를 활용하여 폰트 사이즈 변경하는 슬롯
@@ -1085,6 +1047,12 @@ void ImageAlbum::on_Fontsize_valueChanged(int size)
 void ImageAlbum::receiveCameraStart()
 {
     ui->listWidget->clear();
+
+    ui->Brightness->setSliderPosition(0);
+    ui->Contrast->setSliderPosition(10);
+    ui->Gamma->setSliderPosition(10);
+    ui->LengthResult->clear();
+    ui->AngleResult->clear();
     imageView->resetTransform();
     imageScene->clear();
 
@@ -1116,12 +1084,10 @@ void ImageAlbum::receivePrintStart()
            painter.drawText(rectangle, 0, "발행 일자 : " + QDate::currentDate().toString("yyyy-MM-dd"));
            painter.end();
        }
-
-
 }
 
-
-
-
-
+void ImageAlbum::on_ImplantcomboBox_activated(int index)
+{
+    emit sendImplantType(index);
+}
 
