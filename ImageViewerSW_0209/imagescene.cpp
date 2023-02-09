@@ -63,36 +63,36 @@ void ImageScene::ReceiveType(int type)
     m_implantList.clear();
     point = 0;
 
-    if(type == 0){
+    if(type == DrawType::Lines){
         m_drawType = Lines;
     }
 
-    else if(type == 1){
+    else if(type == DrawType::FreeHand){
         m_drawType = FreeHand;
     }
 
-    else if(type == 2){
+    else if(type == DrawType::Laser){
         m_drawType = Laser;
     }
 
-    else if(type == 3){
+    else if(type == DrawType::Cursor){
         m_drawType = Cursor;
     }
 
-    else if(type == 4){
+    else if(type == DrawType::Ellipse){
         m_drawType = Ellipse;
     }
 
-    else if(type == 5){
+    else if(type == DrawType::Rectangle){
         m_drawType = Rectangle;
     }
 
-    else if(type == 6){
+    else if(type == DrawType::Text){
         m_drawType = Text;
     }
 
     //Delete : 선택된 아이템 삭제
-    else if(type == 7){
+    else if(type == DrawType::Delete){
         m_drawType = Delete;
         foreach(auto item, selectedItems())
             removeItem(item);
@@ -100,7 +100,7 @@ void ImageScene::ReceiveType(int type)
     }
 
     //Clear : 원본을 눌렀을 때 저장되어있던 원, 사각형, 텍스트, 이미지 데이터 삭제
-    else if(type == 8){
+    else if(type == DrawType::Clear){
         m_ellipseList.clear();
         m_rectList.clear();
         m_textList.clear();
@@ -111,30 +111,21 @@ void ImageScene::ReceiveType(int type)
     }
 
     //Ceph, Pano 길이 측정 기능
-    else if(type == 9){
+    else if(type == DrawType::Length){
         m_drawType = Length;
     }
 
-    //
-    else if(type == 10){
-//        m_drawType = Histo;
-    }
-
     //각도 측정 기능
-    else if(type == 11){
+    else if(type == DrawType::Angle){
         m_drawType = Angle;
     }
 
     //캡쳐 기능
-    else if(type == 12){
+    else if(type == DrawType::Capture){
         m_drawType = Capture;
     }
 
-    else if(type == 13){
-//        m_drawType = BrushColor;
-    }
-
-    else if(type == 14){
+    else if(type == DrawType::Implant){
         m_drawType = Implant;
     }
 

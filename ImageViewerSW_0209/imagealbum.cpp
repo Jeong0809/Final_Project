@@ -1,17 +1,12 @@
-#include "ui_prescription.h"
-#include "imagealbum.h"
 #include "ui_imagealbum.h"
 #include "imagescene.h"
+#include "imagealbum.h"
 #include "prescription.h"
 
-#include <QSplitter>
 #include <QListWidget>
 #include <QDir>
 #include <QFileInfo>
-#include <QGraphicsScene>
-#include <QGroupBox>
 #include <QColorDialog>
-#include <QMouseEvent>
 #include <QMessageBox>
 #include <QChart>
 #include <QChartView>
@@ -271,15 +266,14 @@ void ImageAlbum::ReceiveMeasurement(QString type, double length)
     }
 }
 
-
-
 void ImageAlbum::Implant()
 {
     if(selectImage.isNull()){
         QMessageBox:: critical(this, "경고", "이미지를 선택하세요");
         return;
     }
-    emit SendType(14);
+    emit SendType(ImageScene::DrawType::Implant);
+//    emit SendType(14);
 }
 
 void ImageAlbum::Capture()
@@ -288,7 +282,8 @@ void ImageAlbum::Capture()
         QMessageBox:: critical(this, "경고", "이미지를 선택하세요");
         return;
     }
-    emit SendType(12);
+    emit SendType(ImageScene::DrawType::Capture);
+//    emit SendType(12);
 }
 
 void ImageAlbum::Angle()
@@ -298,7 +293,8 @@ void ImageAlbum::Angle()
         QMessageBox:: critical(this, "경고", "이미지를 선택하세요");
         return;
     }
-    emit SendType(11);
+    emit SendType(ImageScene::DrawType::Angle);
+//    emit SendType(11);
 }
 
 void ImageAlbum::Length()
@@ -309,7 +305,8 @@ void ImageAlbum::Length()
         return;
     }
     ui->LengthResult->clear();
-    emit SendType(9);
+    emit SendType(ImageScene::DrawType::Length);
+//    emit SendType(9);
 
     int origWidth = selectImage.width();
     int origHeight = selectImage.height();
@@ -328,7 +325,8 @@ void ImageAlbum::TextBox()
 
     ui->lineEdit->text();
     emit SendText(ui->lineEdit->text());
-    emit SendType(6);
+    emit SendType(ImageScene::DrawType::Text);
+//    emit SendType(6);
     ui->lineEdit->clear();
 }
 
@@ -340,7 +338,8 @@ void ImageAlbum::RectangleItem()
         return;
     }
 
-    emit SendType(5);
+    emit SendType(ImageScene::DrawType::Rectangle);
+//    emit SendType(5);
 }
 
 void ImageAlbum::Cursor()
@@ -351,7 +350,8 @@ void ImageAlbum::Cursor()
         return;
     }
 
-    emit SendType(3);
+    emit SendType(ImageScene::DrawType::Cursor);
+//    emit SendType(3);
 }
 
 void ImageAlbum::DeleteItem()
@@ -362,7 +362,8 @@ void ImageAlbum::DeleteItem()
         return;
     }
 
-    emit SendType(7);
+    emit SendType(ImageScene::DrawType::Delete);
+//    emit SendType(7);
 }
 
 void ImageAlbum::Ellipse()
@@ -373,7 +374,8 @@ void ImageAlbum::Ellipse()
         return;
     }
 
-    emit SendType(4);
+    emit SendType(ImageScene::DrawType::Ellipse);
+//    emit SendType(4);
 }
 
 void ImageAlbum::Laser()
@@ -384,7 +386,8 @@ void ImageAlbum::Laser()
         return;
     }
 
-    emit SendType(2);
+    emit SendType(ImageScene::DrawType::Laser);
+//    emit SendType(2);
 }
 
 void ImageAlbum::Lines()
@@ -395,7 +398,8 @@ void ImageAlbum::Lines()
         return;
     }
 
-    emit SendType(0);
+    emit SendType(ImageScene::DrawType::Lines);
+//    emit SendType(0);
 }
 
 void ImageAlbum::Freehand()
@@ -406,7 +410,8 @@ void ImageAlbum::Freehand()
         return;
     }
 
-    emit SendType(1);
+    emit SendType(ImageScene::DrawType::FreeHand);
+//    emit SendType(1);
 }
 
 void ImageAlbum::Thickness(int value)
@@ -418,7 +423,6 @@ void ImageAlbum::Thickness(int value)
 void ImageAlbum::BrushColor()
 {
     paintColor = QColorDialog::getColor(paintColor, this);
-//    emit SendType(13);
     emit SendBrushColor(paintColor);
 }
 
@@ -449,7 +453,8 @@ void ImageAlbum::OrigImage()
         return;
     }
 
-    emit SendType(8);
+    emit SendType(ImageScene::DrawType::Clear);
+//    emit SendType(8);
     imageView->resetTransform();
     imageScene->setBackgroundBrush(Qt::white);
     ui->Brightness->setSliderPosition(0);
@@ -471,7 +476,8 @@ void ImageAlbum::OrigImage()
 
 void ImageAlbum::selectItem(QListWidgetItem* item)
 {
-    emit SendType(8);
+    emit SendType(ImageScene::DrawType::Clear);
+//    emit SendType(8);
     imageView->resetTransform();
     ui->LengthResult->clear();
     imageView->setBackgroundBrush(Qt::white);
@@ -580,7 +586,8 @@ void ImageAlbum::ReceiveCapturePos(QPointF startPos, QPointF endPos)
     selectImage = image_capture.convertToFormat(QImage::Format_Grayscale8).copy();
     Histogram();
 
-    emit SendType(8);
+    emit SendType(ImageScene::DrawType::Clear);
+//    emit SendType(8);
 }
 
 void ImageAlbum::Brightness(int value)

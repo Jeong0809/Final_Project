@@ -50,6 +50,7 @@ private:
     QString imageType;
 
     ImageScene* imageScene;
+    ImageScene::DrawType m_drawType;
     Prescription* m_prescription;
     QChart *chart;
     QChartView *view;
