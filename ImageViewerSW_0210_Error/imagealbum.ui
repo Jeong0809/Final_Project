@@ -123,9 +123,12 @@
        <property name="frameShadow">
         <enum>QFrame::Raised</enum>
        </property>
-       <layout class="QGridLayout" name="gridLayout_10">
+       <layout class="QGridLayout" name="gridLayout_9">
+        <property name="horizontalSpacing">
+         <number>0</number>
+        </property>
         <item row="0" column="0">
-         <widget class="QLabel" name="label_4">
+         <widget class="QLabel" name="label_7">
           <property name="font">
            <font>
             <pointsize>11</pointsize>
@@ -136,14 +139,22 @@
            <string notr="true">background-color: rgb(150, 150, 150);
 color: rgb(255, 255, 255);
 
-border: 1px solid rgba(150, 150, 150, 150);
-border-radius:7px;</string>
+border: 1px solid;
+border-top-left-radius: 7px;
+border-top-right-radius: 0px;
+border-bottom-left-radius: 7px;
+border-bottom-right-radius: 0px;
+
+border-left-color: rgb(139, 139, 139);
+border-top-color: rgb(139, 139, 139);
+border-right-color: rgb(150, 150, 150);
+border-bottom-color: rgb(139, 139, 139);</string>
           </property>
           <property name="text">
-           <string>촬영 일자</string>
+           <string>이미지 정보</string>
           </property>
           <property name="buddy">
-           <cstring>PhotoDate</cstring>
+           <cstring>ImageInfo</cstring>
           </property>
          </widget>
         </item>
@@ -156,12 +167,29 @@ border-radius:7px;</string>
           </property>
           <property name="styleSheet">
            <string notr="true">border: 1px solid rgba(190, 190, 190, 150);
-border-radius:7px;</string>
+border-top-left-radius: 0px;
+border-top-right-radius: 7px;
+border-bottom-left-radius: 0px;
+border-bottom-right-radius: 7px;
+
+border-right-color: rgb(139, 139, 139);
+border-top-color: rgb(139, 139, 139);
+border-left-color: rgb(150, 150, 150);
+border-bottom-color: rgb(139, 139, 139);</string>
           </property>
          </widget>
         </item>
         <item row="1" column="0">
-         <widget class="QLabel" name="label_7">
+         <widget class="QLabel" name="label_4">
+          <property name="enabled">
+           <bool>true</bool>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>67</width>
+            <height>0</height>
+           </size>
+          </property>
           <property name="font">
            <font>
             <pointsize>11</pointsize>
@@ -172,14 +200,22 @@ border-radius:7px;</string>
            <string notr="true">background-color: rgb(150, 150, 150);
 color: rgb(255, 255, 255);
 
-border: 1px solid rgba(150, 150, 150, 150);
-border-radius:7px;</string>
+border: 1px solid;
+border-top-left-radius: 7px;
+border-top-right-radius: 0px;
+border-bottom-left-radius: 7px;
+border-bottom-right-radius: 0px;
+
+border-left-color: rgb(139, 139, 139);
+border-top-color: rgb(139, 139, 139);
+border-right-color: rgb(150, 150, 150);
+border-bottom-color: rgb(139, 139, 139);</string>
           </property>
           <property name="text">
-           <string>이미지 정보</string>
+           <string>촬영 일자</string>
           </property>
           <property name="buddy">
-           <cstring>ImageInfo</cstring>
+           <cstring>PhotoDate</cstring>
           </property>
          </widget>
         </item>
@@ -192,7 +228,15 @@ border-radius:7px;</string>
           </property>
           <property name="styleSheet">
            <string notr="true">border: 1px solid rgba(190, 190, 190, 150);
-border-radius:7px;</string>
+border-top-left-radius: 0px;
+border-top-right-radius: 7px;
+border-bottom-left-radius: 0px;
+border-bottom-right-radius: 7px;
+
+border-right-color: rgb(139, 139, 139);
+border-top-color: rgb(139, 139, 139);
+border-left-color: rgb(150, 150, 150);
+border-bottom-color: rgb(139, 139, 139);</string>
           </property>
          </widget>
         </item>
@@ -604,22 +648,11 @@ border: 1px solid white;</string>
          <string>Tab 2</string>
         </attribute>
         <layout class="QGridLayout" name="gridLayout_5">
-         <item row="0" column="1">
-          <widget class="QLabel" name="label_12">
-           <property name="text">
-            <string>그리기</string>
-           </property>
-          </widget>
-         </item>
-         <item row="2" column="1">
-          <widget class="QLabel" name="label_10">
-           <property name="text">
-            <string>텍스트</string>
-           </property>
-          </widget>
-         </item>
-         <item row="1" column="2">
+         <item row="1" column="1" colspan="2">
           <widget class="QFrame" name="frame_2">
+           <property name="styleSheet">
+            <string notr="true">QFrame { border: 1px solid rgba(190, 190, 190, 150); }</string>
+           </property>
            <property name="frameShape">
             <enum>QFrame::StyledPanel</enum>
            </property>
@@ -627,26 +660,23 @@ border: 1px solid white;</string>
             <enum>QFrame::Raised</enum>
            </property>
            <layout class="QGridLayout" name="gridLayout_3">
-            <item row="0" column="0">
+            <item row="0" column="1">
              <layout class="QHBoxLayout" name="horizontalLayout">
               <item>
-               <widget class="QLabel" name="label_3">
-                <property name="font">
-                 <font>
-                  <pointsize>11</pointsize>
-                  <bold>true</bold>
-                 </font>
-                </property>
-                <property name="text">
-                 <string>두께</string>
-                </property>
-                <property name="buddy">
-                 <cstring>Thickness</cstring>
-                </property>
-               </widget>
-              </item>
-              <item>
                <widget class="QSpinBox" name="Thickness">
+                <property name="minimumSize">
+                 <size>
+                  <width>0</width>
+                  <height>21</height>
+                 </size>
+                </property>
+                <property name="styleSheet">
+                 <string notr="true">QSpinBox
+{
+border : 1px solid rgba(190, 190, 190, 150);
+border-radius: 1px;
+}</string>
+                </property>
                 <property name="value">
                  <number>6</number>
                 </property>
@@ -654,66 +684,255 @@ border: 1px solid white;</string>
               </item>
              </layout>
             </item>
+            <item row="0" column="0">
+             <widget class="QLabel" name="label_8">
+              <property name="maximumSize">
+               <size>
+                <width>50</width>
+                <height>16777215</height>
+               </size>
+              </property>
+              <property name="font">
+               <font>
+                <pointsize>11</pointsize>
+                <bold>true</bold>
+               </font>
+              </property>
+              <property name="styleSheet">
+               <string notr="true">border: 0px;</string>
+              </property>
+              <property name="text">
+               <string>펜 크기</string>
+              </property>
+             </widget>
+            </item>
            </layout>
           </widget>
          </item>
-         <item row="3" column="2">
-          <widget class="QFrame" name="frame_5">
+         <item row="0" column="1" colspan="2">
+          <widget class="QFrame" name="frame_7">
+           <property name="styleSheet">
+            <string notr="true">QFrame { border: 1px solid rgba(190, 190, 190, 150); }</string>
+           </property>
            <property name="frameShape">
             <enum>QFrame::StyledPanel</enum>
            </property>
            <property name="frameShadow">
             <enum>QFrame::Raised</enum>
            </property>
-           <layout class="QGridLayout" name="gridLayout_6">
-            <item row="0" column="0">
-             <widget class="QLineEdit" name="AngleResult"/>
-            </item>
+           <layout class="QGridLayout" name="gridLayout_12">
             <item row="0" column="1">
-             <widget class="QToolButton" name="Angle">
-              <property name="styleSheet">
-               <string notr="true">background-color: qlineargradient(spread:pad, x1:0.0, y1:0.0, x2:1, 
+             <layout class="QHBoxLayout" name="horizontalLayout_2">
+              <item>
+               <widget class="QToolButton" name="Cursor">
+                <property name="styleSheet">
+                 <string notr="true">background-color: qlineargradient(spread:pad, x1:0.0, y1:0.0, x2:1, 
 y2:1, stop:0 rgba(150, 150, 150, 50), stop:1 rgba(90, 90, 90, 100));
 selection-color: black;
 border-width: 1px;
 border-style: solid gray;
 </string>
-              </property>
-              <property name="text">
-               <string>각도</string>
-              </property>
-             </widget>
-            </item>
-            <item row="1" column="0">
-             <widget class="QLineEdit" name="LengthResult"/>
+                </property>
+                <property name="text">
+                 <string>커서</string>
+                </property>
+                <property name="iconSize">
+                 <size>
+                  <width>30</width>
+                  <height>30</height>
+                 </size>
+                </property>
+                <property name="shortcut">
+                 <string>Ctrl+`</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QToolButton" name="Lines">
+                <property name="styleSheet">
+                 <string notr="true">background-color: qlineargradient(spread:pad, x1:0.0, y1:0.0, x2:1, 
+y2:1, stop:0 rgba(150, 150, 150, 50), stop:1 rgba(90, 90, 90, 100));
+selection-color: black;
+border-width: 1px;
+border-style: solid gray;
+</string>
+                </property>
+                <property name="text">
+                 <string>그리기</string>
+                </property>
+                <property name="iconSize">
+                 <size>
+                  <width>30</width>
+                  <height>30</height>
+                 </size>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QToolButton" name="OrigImage2">
+                <property name="styleSheet">
+                 <string notr="true">background-color: qlineargradient(spread:pad, x1:0.0, y1:0.0, x2:1, 
+y2:1, stop:0 rgba(150, 150, 150, 50), stop:1 rgba(90, 90, 90, 100));
+selection-color: black;
+border-width: 1px;
+border-style: solid gray;
+</string>
+                </property>
+                <property name="text">
+                 <string>원본</string>
+                </property>
+                <property name="iconSize">
+                 <size>
+                  <width>30</width>
+                  <height>30</height>
+                 </size>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QToolButton" name="Delete">
+                <property name="styleSheet">
+                 <string notr="true">background-color: qlineargradient(spread:pad, x1:0.0, y1:0.0, x2:1, 
+y2:1, stop:0 rgba(150, 150, 150, 50), stop:1 rgba(90, 90, 90, 100));
+selection-color: black;
+border-width: 1px;
+border-style: solid gray;
+</string>
+                </property>
+                <property name="text">
+                 <string>삭제</string>
+                </property>
+                <property name="iconSize">
+                 <size>
+                  <width>30</width>
+                  <height>30</height>
+                 </size>
+                </property>
+                <property name="shortcut">
+                 <string>Del</string>
+                </property>
+               </widget>
+              </item>
+             </layout>
             </item>
             <item row="1" column="1">
-             <widget class="QToolButton" name="LengthMeasurement">
-              <property name="styleSheet">
-               <string notr="true">background-color: qlineargradient(spread:pad, x1:0.0, y1:0.0, x2:1, 
+             <layout class="QHBoxLayout" name="horizontalLayout_3">
+              <item>
+               <widget class="QToolButton" name="Freehand">
+                <property name="styleSheet">
+                 <string notr="true">background-color: qlineargradient(spread:pad, x1:0.0, y1:0.0, x2:1, 
 y2:1, stop:0 rgba(150, 150, 150, 50), stop:1 rgba(90, 90, 90, 100));
 selection-color: black;
 border-width: 1px;
 border-style: solid gray;
 </string>
+                </property>
+                <property name="text">
+                 <string>폐곡선</string>
+                </property>
+                <property name="iconSize">
+                 <size>
+                  <width>30</width>
+                  <height>30</height>
+                 </size>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QToolButton" name="Ellipse">
+                <property name="styleSheet">
+                 <string notr="true">background-color: qlineargradient(spread:pad, x1:0.0, y1:0.0, x2:1, 
+y2:1, stop:0 rgba(150, 150, 150, 50), stop:1 rgba(90, 90, 90, 100));
+selection-color: black;
+border-width: 1px;
+border-style: solid gray;
+</string>
+                </property>
+                <property name="text">
+                 <string>원</string>
+                </property>
+                <property name="iconSize">
+                 <size>
+                  <width>30</width>
+                  <height>30</height>
+                 </size>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QToolButton" name="Rectangle">
+                <property name="styleSheet">
+                 <string notr="true">background-color: qlineargradient(spread:pad, x1:0.0, y1:0.0, x2:1, 
+y2:1, stop:0 rgba(150, 150, 150, 50), stop:1 rgba(90, 90, 90, 100));
+selection-color: black;
+border-width: 1px;
+border-style: solid gray;
+</string>
+                </property>
+                <property name="text">
+                 <string>사각형</string>
+                </property>
+                <property name="iconSize">
+                 <size>
+                  <width>30</width>
+                  <height>30</height>
+                 </size>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QToolButton" name="Brush">
+                <property name="styleSheet">
+                 <string notr="true">background-color: qlineargradient(spread:pad, x1:0.0, y1:0.0, x2:1, 
+y2:1, stop:0 rgba(150, 150, 150, 50), stop:1 rgba(90, 90, 90, 100));
+selection-color: black;
+border-width: 1px;
+border-style: solid gray;
+</string>
+                </property>
+                <property name="text">
+                 <string>색상 설정</string>
+                </property>
+                <property name="iconSize">
+                 <size>
+                  <width>30</width>
+                  <height>30</height>
+                 </size>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </item>
+            <item row="0" column="0">
+             <widget class="QLabel" name="label_12">
+              <property name="maximumSize">
+               <size>
+                <width>50</width>
+                <height>16777215</height>
+               </size>
+              </property>
+              <property name="font">
+               <font>
+                <pointsize>11</pointsize>
+                <bold>true</bold>
+               </font>
+              </property>
+              <property name="styleSheet">
+               <string notr="true">border: 0px;</string>
               </property>
               <property name="text">
-               <string>길이</string>
+               <string>그리기</string>
               </property>
              </widget>
             </item>
            </layout>
           </widget>
          </item>
-         <item row="1" column="1">
-          <widget class="QLabel" name="label_8">
-           <property name="text">
-            <string>펜</string>
-           </property>
-          </widget>
-         </item>
-         <item row="2" column="2">
+         <item row="2" column="1" colspan="2">
           <widget class="QFrame" name="frame_4">
+           <property name="styleSheet">
+            <string notr="true">QFrame { border: 1px solid rgba(190, 190, 190, 150); }</string>
+           </property>
            <property name="frameShape">
             <enum>QFrame::StyledPanel</enum>
            </property>
@@ -721,43 +940,7 @@ border-style: solid gray;
             <enum>QFrame::Raised</enum>
            </property>
            <layout class="QGridLayout" name="gridLayout_4">
-            <item row="0" column="0" colspan="2">
-             <widget class="QLineEdit" name="lineEdit">
-              <property name="toolTip">
-               <string/>
-              </property>
-              <property name="text">
-               <string/>
-              </property>
-              <property name="placeholderText">
-               <string notr="true"/>
-              </property>
-             </widget>
-            </item>
-            <item row="1" column="0">
-             <widget class="QLabel" name="label_5">
-              <property name="font">
-               <font>
-                <pointsize>11</pointsize>
-                <bold>true</bold>
-               </font>
-              </property>
-              <property name="text">
-               <string>크기</string>
-              </property>
-              <property name="buddy">
-               <cstring>Fontsize</cstring>
-              </property>
-             </widget>
-            </item>
-            <item row="1" column="1">
-             <widget class="QSpinBox" name="Fontsize">
-              <property name="value">
-               <number>10</number>
-              </property>
-             </widget>
-            </item>
-            <item row="1" column="2">
+            <item row="1" column="4">
              <widget class="QToolButton" name="TextBox">
               <property name="styleSheet">
                <string notr="true">background-color: qlineargradient(spread:pad, x1:0.0, y1:0.0, x2:1, 
@@ -772,27 +955,88 @@ border-style: solid gray;
               </property>
              </widget>
             </item>
+            <item row="0" column="1">
+             <widget class="QLabel" name="label_10">
+              <property name="maximumSize">
+               <size>
+                <width>50</width>
+                <height>16777215</height>
+               </size>
+              </property>
+              <property name="font">
+               <font>
+                <pointsize>11</pointsize>
+                <bold>true</bold>
+               </font>
+              </property>
+              <property name="styleSheet">
+               <string notr="true">border: 0px;</string>
+              </property>
+              <property name="text">
+               <string>텍스트</string>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="1" colspan="3">
+             <widget class="QLineEdit" name="lineEdit">
+              <property name="minimumSize">
+               <size>
+                <width>0</width>
+                <height>21</height>
+               </size>
+              </property>
+              <property name="toolTip">
+               <string/>
+              </property>
+              <property name="styleSheet">
+               <string notr="true">border: 1px solid rgba(190, 190, 190, 150);
+border-radius: 0px;</string>
+              </property>
+              <property name="text">
+               <string/>
+              </property>
+              <property name="placeholderText">
+               <string notr="true"/>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="2" colspan="3">
+             <widget class="QSpinBox" name="Fontsize">
+              <property name="minimumSize">
+               <size>
+                <width>0</width>
+                <height>21</height>
+               </size>
+              </property>
+              <property name="styleSheet">
+               <string notr="true">QSpinBox
+{
+border : 1px solid rgba(190, 190, 190, 150);
+border-radius: 1px;
+}</string>
+              </property>
+              <property name="value">
+               <number>10</number>
+              </property>
+             </widget>
+            </item>
            </layout>
           </widget>
          </item>
-         <item row="3" column="1">
-          <widget class="QLabel" name="label_9">
-           <property name="text">
-            <string>측정</string>
+         <item row="3" column="1" colspan="2">
+          <widget class="QFrame" name="frame_5">
+           <property name="styleSheet">
+            <string notr="true">QFrame { border: 1px solid rgba(190, 190, 190, 150); }</string>
            </property>
-          </widget>
-         </item>
-         <item row="0" column="2">
-          <widget class="QFrame" name="frame_7">
            <property name="frameShape">
             <enum>QFrame::StyledPanel</enum>
            </property>
            <property name="frameShadow">
             <enum>QFrame::Raised</enum>
            </property>
-           <layout class="QGridLayout" name="gridLayout_12">
-            <item row="0" column="0">
-             <widget class="QToolButton" name="OrigImage2">
+           <layout class="QGridLayout" name="gridLayout_6">
+            <item row="0" column="2">
+             <widget class="QToolButton" name="Angle">
               <property name="styleSheet">
                <string notr="true">background-color: qlineargradient(spread:pad, x1:0.0, y1:0.0, x2:1, 
 y2:1, stop:0 rgba(150, 150, 150, 50), stop:1 rgba(90, 90, 90, 100));
@@ -802,129 +1046,26 @@ border-style: solid gray;
 </string>
               </property>
               <property name="text">
-               <string>원본</string>
-              </property>
-              <property name="iconSize">
-               <size>
-                <width>30</width>
-                <height>30</height>
-               </size>
-              </property>
-             </widget>
-            </item>
-            <item row="0" column="1" colspan="2">
-             <widget class="QToolButton" name="Lines">
-              <property name="styleSheet">
-               <string notr="true">background-color: qlineargradient(spread:pad, x1:0.0, y1:0.0, x2:1, 
-y2:1, stop:0 rgba(150, 150, 150, 50), stop:1 rgba(90, 90, 90, 100));
-selection-color: black;
-border-width: 1px;
-border-style: solid gray;
-</string>
-              </property>
-              <property name="text">
-               <string>그리기</string>
-              </property>
-              <property name="iconSize">
-               <size>
-                <width>30</width>
-                <height>30</height>
-               </size>
-              </property>
-             </widget>
-            </item>
-            <item row="0" column="3">
-             <widget class="QToolButton" name="Cursor">
-              <property name="styleSheet">
-               <string notr="true">background-color: qlineargradient(spread:pad, x1:0.0, y1:0.0, x2:1, 
-y2:1, stop:0 rgba(150, 150, 150, 50), stop:1 rgba(90, 90, 90, 100));
-selection-color: black;
-border-width: 1px;
-border-style: solid gray;
-</string>
-              </property>
-              <property name="text">
-               <string>커서</string>
-              </property>
-              <property name="iconSize">
-               <size>
-                <width>30</width>
-                <height>30</height>
-               </size>
-              </property>
-              <property name="shortcut">
-               <string>Ctrl+`</string>
-              </property>
-             </widget>
-            </item>
-            <item row="0" column="4">
-             <widget class="QToolButton" name="Delete">
-              <property name="styleSheet">
-               <string notr="true">background-color: qlineargradient(spread:pad, x1:0.0, y1:0.0, x2:1, 
-y2:1, stop:0 rgba(150, 150, 150, 50), stop:1 rgba(90, 90, 90, 100));
-selection-color: black;
-border-width: 1px;
-border-style: solid gray;
-</string>
-              </property>
-              <property name="text">
-               <string>삭제</string>
-              </property>
-              <property name="iconSize">
-               <size>
-                <width>30</width>
-                <height>30</height>
-               </size>
-              </property>
-              <property name="shortcut">
-               <string>Del</string>
-              </property>
-             </widget>
-            </item>
-            <item row="1" column="0">
-             <widget class="QToolButton" name="Rectangle">
-              <property name="styleSheet">
-               <string notr="true">background-color: qlineargradient(spread:pad, x1:0.0, y1:0.0, x2:1, 
-y2:1, stop:0 rgba(150, 150, 150, 50), stop:1 rgba(90, 90, 90, 100));
-selection-color: black;
-border-width: 1px;
-border-style: solid gray;
-</string>
-              </property>
-              <property name="text">
-               <string>사각형</string>
-              </property>
-              <property name="iconSize">
-               <size>
-                <width>30</width>
-                <height>30</height>
-               </size>
+               <string>각도</string>
               </property>
              </widget>
             </item>
             <item row="1" column="1">
-             <widget class="QToolButton" name="Ellipse">
-              <property name="styleSheet">
-               <string notr="true">background-color: qlineargradient(spread:pad, x1:0.0, y1:0.0, x2:1, 
-y2:1, stop:0 rgba(150, 150, 150, 50), stop:1 rgba(90, 90, 90, 100));
-selection-color: black;
-border-width: 1px;
-border-style: solid gray;
-</string>
-              </property>
-              <property name="text">
-               <string>원</string>
-              </property>
-              <property name="iconSize">
+             <widget class="QLineEdit" name="LengthResult">
+              <property name="minimumSize">
                <size>
-                <width>30</width>
-                <height>30</height>
+                <width>0</width>
+                <height>21</height>
                </size>
+              </property>
+              <property name="styleSheet">
+               <string notr="true">border: 1px solid rgba(190, 190, 190, 150);
+border-radius: 0px;</string>
               </property>
              </widget>
             </item>
-            <item row="1" column="2" colspan="2">
-             <widget class="QToolButton" name="Freehand">
+            <item row="1" column="2">
+             <widget class="QToolButton" name="LengthMeasurement">
               <property name="styleSheet">
                <string notr="true">background-color: qlineargradient(spread:pad, x1:0.0, y1:0.0, x2:1, 
 y2:1, stop:0 rgba(150, 150, 150, 50), stop:1 rgba(90, 90, 90, 100));
@@ -934,42 +1075,54 @@ border-style: solid gray;
 </string>
               </property>
               <property name="text">
-               <string>폐곡선</string>
-              </property>
-              <property name="iconSize">
-               <size>
-                <width>30</width>
-                <height>30</height>
-               </size>
+               <string>길이</string>
               </property>
              </widget>
             </item>
-            <item row="1" column="4">
-             <widget class="QToolButton" name="Brush">
+            <item row="0" column="1">
+             <widget class="QLineEdit" name="AngleResult">
+              <property name="minimumSize">
+               <size>
+                <width>0</width>
+                <height>21</height>
+               </size>
+              </property>
               <property name="styleSheet">
-               <string notr="true">background-color: qlineargradient(spread:pad, x1:0.0, y1:0.0, x2:1, 
-y2:1, stop:0 rgba(150, 150, 150, 50), stop:1 rgba(90, 90, 90, 100));
-selection-color: black;
-border-width: 1px;
-border-style: solid gray;
-</string>
+               <string notr="true">border: 1px solid rgba(190, 190, 190, 150);
+border-radius: 0px;</string>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="0">
+             <widget class="QLabel" name="label_9">
+              <property name="maximumSize">
+               <size>
+                <width>50</width>
+                <height>16777215</height>
+               </size>
+              </property>
+              <property name="font">
+               <font>
+                <pointsize>11</pointsize>
+                <bold>true</bold>
+               </font>
+              </property>
+              <property name="styleSheet">
+               <string notr="true">border: 0px;</string>
               </property>
               <property name="text">
-               <string>색상 설정</string>
-              </property>
-              <property name="iconSize">
-               <size>
-                <width>30</width>
-                <height>30</height>
-               </size>
+               <string>측정</string>
               </property>
              </widget>
             </item>
            </layout>
           </widget>
          </item>
-         <item row="4" column="2">
+         <item row="4" column="1" colspan="2">
           <widget class="QFrame" name="frame_6">
+           <property name="styleSheet">
+            <string notr="true">QFrame { border: 1px solid rgba(190, 190, 190, 150); }</string>
+           </property>
            <property name="frameShape">
             <enum>QFrame::StyledPanel</enum>
            </property>
@@ -977,8 +1130,21 @@ border-style: solid gray;
             <enum>QFrame::Raised</enum>
            </property>
            <layout class="QGridLayout" name="gridLayout_7">
-            <item row="0" column="0">
+            <item row="0" column="1">
              <widget class="QComboBox" name="ImplantcomboBox">
+              <property name="minimumSize">
+               <size>
+                <width>0</width>
+                <height>21</height>
+               </size>
+              </property>
+              <property name="styleSheet">
+               <string notr="true">QComboBox
+{
+border : 1px solid rgba(190, 190, 190, 150);
+border-radius: 1px;
+}</string>
+              </property>
               <item>
                <property name="text">
                 <string>어금니</string>
@@ -991,7 +1157,7 @@ border-style: solid gray;
               </item>
              </widget>
             </item>
-            <item row="0" column="1">
+            <item row="0" column="2">
              <widget class="QToolButton" name="Implant">
               <property name="styleSheet">
                <string notr="true">background-color: qlineargradient(spread:pad, x1:0.0, y1:0.0, x2:1, 
@@ -1002,7 +1168,7 @@ border-style: solid gray;
 </string>
               </property>
               <property name="text">
-               <string>임플란트 식립</string>
+               <string>식립</string>
               </property>
               <property name="iconSize">
                <size>
@@ -1012,14 +1178,29 @@ border-style: solid gray;
               </property>
              </widget>
             </item>
+            <item row="0" column="0">
+             <widget class="QLabel" name="label_11">
+              <property name="maximumSize">
+               <size>
+                <width>50</width>
+                <height>16777215</height>
+               </size>
+              </property>
+              <property name="font">
+               <font>
+                <pointsize>11</pointsize>
+                <bold>true</bold>
+               </font>
+              </property>
+              <property name="styleSheet">
+               <string notr="true">border: 0px;</string>
+              </property>
+              <property name="text">
+               <string>임플란트</string>
+              </property>
+             </widget>
+            </item>
            </layout>
-          </widget>
-         </item>
-         <item row="4" column="1">
-          <widget class="QLabel" name="label_11">
-           <property name="text">
-            <string>임플란트</string>
-           </property>
           </widget>
          </item>
         </layout>

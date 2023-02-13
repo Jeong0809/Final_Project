@@ -1,3 +1,13 @@
+/*프로그램명 : ImageViewerSW
+파일명 : imagealbum.cpp
+설명 : graphicsview, graphicsscene을 활용하여 다양한 영상처리(Sharpen, Blur, Contrast,
+Brightness, 좌우반전, 상하반전, 회전, 줌인, 줌아웃 등의 기능을 담고있는 클래스
+사용성을 위해 처방전 작성 버튼과 진료 종료 버튼은 해당 파일 내에 존재하고 있고, 진료 종료 버튼 클릭 시
+다음 환자의 진료 시작을 시작할 수 있음
+작성자 : 이정연
+최종 수정 날짜 : 2023.02.11*/
+
+
 #include "ui_imagealbum.h"
 #include "imagescene.h"
 #include "imagealbum.h"
@@ -25,6 +35,7 @@ ImageAlbum::ImageAlbum(QWidget *parent)
 {
     ui->setupUi(this);
 
+    //모든 버튼에 이미지로 아이콘 설정
     ui->ZoomIn->setIcon(QIcon("./Icon/zoomin.png"));
     ui->ZoomOut->setIcon(QIcon("./Icon/zoomout.png"));
     ui->Delete->setIcon(QIcon("./Icon/delete.png"));
@@ -71,11 +82,11 @@ ImageAlbum::ImageAlbum(QWidget *parent)
     paintColor = Qt::white;
     ui->LengthResult->setReadOnly(true);
     ui->AngleResult->setReadOnly(true);
-    ui->lineEdit->setPlaceholderText("텍스트를 입력해주세요");
+    ui->lineEdit->setPlaceholderText("텍스트를 입력해주세요...");
 
     ui->tabWidget->setStyleSheet("QTabBar {"
-                                "border: 0px solid #31363B;"
-                                "}"
+                                 "border: 0px solid #31363B;"
+                                 "}"
                                  "QTabBar::tab:top:selected {"
                                  "color: black;"
                                  "background-color: #ED8817;"
@@ -98,8 +109,8 @@ ImageAlbum::ImageAlbum(QWidget *parent)
                                     "text-decoration:none;"
                                     "min-height: 50px;"
                                     "min-width: 80px;"
-                                "}"
-                                "QPushButton:hover { "
+                                    "}"
+                                    "QPushButton:hover { "
                                     "background-color: #F2A754;"
                                     "border-radius:10px;"
                                     "color:#ffffff;"
@@ -110,19 +121,19 @@ ImageAlbum::ImageAlbum(QWidget *parent)
                                     "text-decoration:none;"
                                     "min-height: 50px;"
                                     "min-width: 80px;"
-                                "}"
-                                                  "QPushButton:disabled { "
-                                                      "background-color: rgb(132,132,132); "      // 회색
-                                                      "border-radius:10px;"
-                                                      "border:1px solid rgb(132,132,132);"
-                                                      "color:#ffffff;"
-                                                      "font-family:Malgun Gothic;"
-                                                      "font-size:15px;"
-                                                      "font-weight:bold;"
-                                                      "text-decoration:none;"
-                                                      "min-width: 80px;"
-                                                      "outline: 0; "
-                                                  "}");
+                                    "}"
+                                    "QPushButton:disabled { "
+                                    "background-color: rgb(132,132,132); "      // 회색
+                                    "border-radius:10px;"
+                                    "border:1px solid rgb(132,132,132);"
+                                    "color:#ffffff;"
+                                    "font-family:Malgun Gothic;"
+                                    "font-size:15px;"
+                                    "font-weight:bold;"
+                                    "text-decoration:none;"
+                                    "min-width: 80px;"
+                                    "outline: 0; "
+                                    "}");
 
     ui->EndTreatment->setStyleSheet("QPushButton { "
                                     "background-color: #ED8817;"
@@ -135,8 +146,8 @@ ImageAlbum::ImageAlbum(QWidget *parent)
                                     "text-decoration:none;"
                                     "min-height: 50px;"
                                     "min-width: 80px;"
-                                "}"
-                                "QPushButton:hover { "
+                                    "}"
+                                    "QPushButton:hover { "
                                     "background-color: #F2A754;"
                                     "border-radius:10px;"
                                     "color:#ffffff;"
@@ -147,19 +158,19 @@ ImageAlbum::ImageAlbum(QWidget *parent)
                                     "text-decoration:none;"
                                     "min-height: 50px;"
                                     "min-width: 80px;"
-                                "}"
-                                                  "QPushButton:disabled { "
-                                                      "background-color: rgb(132,132,132); "      // 회색
-                                                      "border-radius:10px;"
-                                                      "border:1px solid rgb(132,132,132);"
-                                                      "color:#ffffff;"
-                                                      "font-family:Malgun Gothic;"
-                                                      "font-size:15px;"
-                                                      "font-weight:bold;"
-                                                      "text-decoration:none;"
-                                                      "min-width: 80px;"
-                                                      "outline: 0; "
-                                                  "}");
+                                    "}"
+                                    "QPushButton:disabled { "
+                                    "background-color: rgb(132,132,132); "      // 회색
+                                    "border-radius:10px;"
+                                    "border:1px solid rgb(132,132,132);"
+                                    "color:#ffffff;"
+                                    "font-family:Malgun Gothic;"
+                                    "font-size:15px;"
+                                    "font-weight:bold;"
+                                    "text-decoration:none;"
+                                    "min-width: 80px;"
+                                    "outline: 0; "
+                                    "}");
 
     imageView->setGeometry(6, 6, 600, 600);
     imageView->setSizeAdjustPolicy(QAbstractScrollArea::AdjustToContents);
@@ -210,34 +221,38 @@ ImageAlbum::ImageAlbum(QWidget *parent)
     //텍스트 사이즈를 변경하기 위해 시그널 전송
     connect(this, SIGNAL(SendFontSize(int)), imageScene, SLOT(ReceiveFontSize(int)));
 
-    //GraphicsSCene에서 측정한 길이를 위젯 화면에 보여주기 위한 시그널-슬롯
+    // GraphicsSCene에서 측정한 길이를 위젯 화면에 보여주기 위한 시그널-슬롯
     connect(imageScene, SIGNAL(SendMeasurement(QString, double)), this, SLOT(ReceiveMeasurement(QString, double)));
 
-    //GraphicsScene에서 측정한 캡쳐되는 영역의 좌표를 불러오는 시그널-슬롯
+    // GraphicsScene에서 측정한 캡쳐되는 영역의 좌표를 불러오는 시그널-슬롯
     connect(imageScene, SIGNAL(SendCapturePos(QPointF, QPointF)), this, SLOT(ReceiveCapturePos(QPointF, QPointF)));
 
-    //처방전 작성 버튼 클릭 시 처방전 클래스로 의사 정보, 환자 정보를 전송
+    // 처방전 작성 버튼 클릭 시 처방전 클래스로 의사 정보, 환자 정보를 전송
     connect(this, SIGNAL(sendPrescription(QString, QString, QString, QString, QString)),
             m_prescription, SLOT(receivePrescription(QString, QString, QString, QString, QString)));
 
-    //처방전 클래스에서 처방전 작성 완료 되면 해당 내용을 서버로 보내주기 위한 과정
+    // 처방전 클래스에서 처방전 작성 완료 되면 해당 내용을 서버로 보내주기 위한 과정
     connect(m_prescription, SIGNAL(sendPrescriptionFinish(QString)), this, SLOT(receivePrescriptionFinish(QString)));
 
-    //콤보박스를 통해 임플란트 타입 선택 시 해당 타입에 따라 다른 임플란트가 식립되도록 하기 위한 시그널-슬롯
+    // 콤보박스를 통해 임플란트 타입 선택 시 해당 타입에 따라 다른 임플란트가 식립되도록 하기 위한 시그널-슬롯
     connect(this, SIGNAL(sendImplantType(int)), imageScene, SLOT(ReceiveImplantType(int)));
 
-//    reloadImages();
+    // 서버로 전송한 처방전이 DB에 저장이 안전하게 되었는지 여부를 알려주기 위한 시그널-슬롯
+    connect(this, SIGNAL(sendPrescriptionYesOrNot(QString)), m_prescription, SLOT(receivePrescriptionYesOrNot(QString)));
+
+    reloadImages();
 }
 
 ImageAlbum::~ImageAlbum()
 {
-
+    delete ui;
 }
 
+// 서버로부터 다운받은 환자의 이미지들을 listWidget에 띄워주는 함수
 void ImageAlbum::reloadImages()
 {
-//    QDir dir("./Photo");
-    QDir dir("./Image");
+    QDir dir("./Photo");
+    //    QDir dir("./Image");
     QStringList filters;
     filters << "*.png" << "*.jpg" << "*.bmp" << "*.gif";
     QFileInfoList fileInfoList = dir.entryInfoList(filters, QDir::Files | QDir::NoDotAndDotDot);
@@ -249,23 +264,28 @@ void ImageAlbum::reloadImages()
         ui->listWidget->addItem(item);
     };
 
-    //진료 시작 버튼 클릭 시 처방전 작성 버튼, 진료 종료 버튼 활성화
+    // 진료 시작 버튼 클릭 시 처방전 작성 버튼, 진료 종료 버튼 활성화
     ui->Prescription->setDisabled(false);
     ui->EndTreatment->setDisabled(false);
 }
 
+// ImageScene 클래스에서 받아온 측정값(각도, 길이)을 lineEdit에 출력
 void ImageAlbum::ReceiveMeasurement(QString type, double length)
 {
+    // 측정된 각도
     if(type == "Angle"){
         QString Result = QString::number(length);
         ui->AngleResult->setText(Result + "°");
     }
+
+    // 측정된 길이
     else {
         QString Result = QString::number(length);
         ui->LengthResult->setText(type + " " + Result + " mm");
     }
 }
 
+// 임플란트 식립 버튼 클릭 시 ImageScene으로 해당 시그널 전송
 void ImageAlbum::Implant()
 {
     if(selectImage.isNull()){
@@ -273,9 +293,9 @@ void ImageAlbum::Implant()
         return;
     }
     emit SendType(ImageScene::DrawType::Implant);
-//    emit SendType(14);
 }
 
+// 캡처 버튼 클릭 시 ImageScene으로 해당 시그널 전송
 void ImageAlbum::Capture()
 {
     if(selectImage.isNull()){
@@ -283,9 +303,9 @@ void ImageAlbum::Capture()
         return;
     }
     emit SendType(ImageScene::DrawType::Capture);
-//    emit SendType(12);
 }
 
+// 각도 측정 버튼 클릭 시 ImageScene으로 해당 시그널 전송
 void ImageAlbum::Angle()
 {
     //이미지가 선택되지 않았다면 예외처리
@@ -294,9 +314,9 @@ void ImageAlbum::Angle()
         return;
     }
     emit SendType(ImageScene::DrawType::Angle);
-//    emit SendType(11);
 }
 
+// 길이 측정 버튼 클릭 시 ImageScene으로 해당 시그널 및 선택된 이미지의 길이 전송
 void ImageAlbum::Length()
 {
     //이미지가 선택되지 않았다면 예외처리
@@ -306,7 +326,6 @@ void ImageAlbum::Length()
     }
     ui->LengthResult->clear();
     emit SendType(ImageScene::DrawType::Length);
-//    emit SendType(9);
 
     int origWidth = selectImage.width();
     int origHeight = selectImage.height();
@@ -315,9 +334,10 @@ void ImageAlbum::Length()
     emit SendLength(origWidth, origHeight, sceneWidth, sceneHeight, imageType);
 }
 
+// 텍스트 입력 버튼 클릭 시 ImageScene으로 해당 시그널 및 입력된 텍스트 전송
 void ImageAlbum::TextBox()
 {
-    //이미지가 선택되지 않았다면 예외처리
+    // 이미지가 선택되지 않았다면 예외처리
     if(selectImage.isNull()){
         QMessageBox:: critical(this, "경고", "이미지를 선택하세요");
         return;
@@ -326,22 +346,22 @@ void ImageAlbum::TextBox()
     ui->lineEdit->text();
     emit SendText(ui->lineEdit->text());
     emit SendType(ImageScene::DrawType::Text);
-//    emit SendType(6);
     ui->lineEdit->clear();
 }
 
+// 사각형 삽입 버튼 클릭 시 ImageScene으로 해당 시그널 전송
 void ImageAlbum::RectangleItem()
 {
-    //이미지가 선택되지 않았다면 예외처리
+    // 이미지가 선택되지 않았다면 예외처리
     if(selectImage.isNull()){
         QMessageBox:: critical(this, "경고", "이미지를 선택하세요");
         return;
     }
 
     emit SendType(ImageScene::DrawType::Rectangle);
-//    emit SendType(5);
 }
 
+// 커서 버튼 클릭 시 ImageScene으로 해당 시그널 전송
 void ImageAlbum::Cursor()
 {
     //이미지가 선택되지 않았다면 예외처리
@@ -351,9 +371,9 @@ void ImageAlbum::Cursor()
     }
 
     emit SendType(ImageScene::DrawType::Cursor);
-//    emit SendType(3);
 }
 
+// 삭제 버튼 클릭 시 ImageScene으로 해당 시그널 전송
 void ImageAlbum::DeleteItem()
 {
     //이미지가 선택되지 않았다면 예외처리
@@ -363,9 +383,9 @@ void ImageAlbum::DeleteItem()
     }
 
     emit SendType(ImageScene::DrawType::Delete);
-//    emit SendType(7);
 }
 
+// 원 삽입 버튼 클릭 시 ImageScene으로 해당 시그널 전송
 void ImageAlbum::Ellipse()
 {
     //이미지가 선택되지 않았다면 예외처리
@@ -375,9 +395,9 @@ void ImageAlbum::Ellipse()
     }
 
     emit SendType(ImageScene::DrawType::Ellipse);
-//    emit SendType(4);
 }
 
+// 레이저 버튼 클릭 시 ImageScene으로 해당 시그널 전송
 void ImageAlbum::Laser()
 {
     //이미지가 선택되지 않았다면 예외처리
@@ -387,9 +407,10 @@ void ImageAlbum::Laser()
     }
 
     emit SendType(ImageScene::DrawType::Laser);
-//    emit SendType(2);
 }
 
+
+// 그리기 버튼 클릭 시 ImageScene으로 해당 시그널 전송
 void ImageAlbum::Lines()
 {
     //이미지가 선택되지 않았다면 예외처리
@@ -399,48 +420,53 @@ void ImageAlbum::Lines()
     }
 
     emit SendType(ImageScene::DrawType::Lines);
-//    emit SendType(0);
 }
 
+// 폐곡선 버튼 클릭 시 ImageScene으로 해당 시그널 전송
 void ImageAlbum::Freehand()
 {
-    //이미지가 선택되지 않았다면 예외처리
+    // 이미지가 선택되지 않았다면 예외처리
     if(selectImage.isNull()){
         QMessageBox:: critical(this, "경고", "이미지를 선택하세요");
         return;
     }
 
     emit SendType(ImageScene::DrawType::FreeHand);
-//    emit SendType(1);
 }
 
+// 펜 두께의 spinBox 값이 변경되면 ImageScene으로 해당 값을 전송
 void ImageAlbum::Thickness(int value)
 {
     penThickness = value;
     emit SendThickness(penThickness);
 }
 
+// ColorDialog를 통해 색상이 선택되면 ImageScene으로 색상값 전송
 void ImageAlbum::BrushColor()
 {
     paintColor = QColorDialog::getColor(paintColor, this);
     emit SendBrushColor(paintColor);
 }
 
+//줌인 기능
 void ImageAlbum::ZoomIn()
 {
     imageView->scale(1.25, 1.25);
 }
 
+//줌아웃 기능
 void ImageAlbum::ZoomOut()
 {
     imageView->scale(0.8, 0.8);
 }
 
+//왼쪽 방향으로 90도 회전 기능
 void ImageAlbum::LeftRotate()
 {
     imageView->rotate(-90);
 }
 
+//오른쪽 방향으로 90도 회전 기능
 void ImageAlbum::RightRotate()
 {
     imageView->rotate(90);
@@ -454,7 +480,6 @@ void ImageAlbum::OrigImage()
     }
 
     emit SendType(ImageScene::DrawType::Clear);
-//    emit SendType(8);
     imageView->resetTransform();
     imageScene->setBackgroundBrush(Qt::white);
     ui->Brightness->setSliderPosition(0);
@@ -477,7 +502,6 @@ void ImageAlbum::OrigImage()
 void ImageAlbum::selectItem(QListWidgetItem* item)
 {
     emit SendType(ImageScene::DrawType::Clear);
-//    emit SendType(8);
     imageView->resetTransform();
     ui->LengthResult->clear();
     imageView->setBackgroundBrush(Qt::white);
@@ -573,7 +597,6 @@ void ImageAlbum::ReceiveCapturePos(QPointF startPos, QPointF endPos)
 
     //원본 이미지에서 주어진 사각형의 사이즈만큼 잘라서 확인
     QPixmap buf = imageView->grab(rect);
-
     QImage image_capture = buf.toImage();
     QSize size = imageView->viewport()->size();
 
@@ -587,7 +610,6 @@ void ImageAlbum::ReceiveCapturePos(QPointF startPos, QPointF endPos)
     Histogram();
 
     emit SendType(ImageScene::DrawType::Clear);
-//    emit SendType(8);
 }
 
 void ImageAlbum::Brightness(int value)
@@ -598,13 +620,13 @@ void ImageAlbum::Brightness(int value)
     }
 
     Mat out;
-    QImage image = selectImage.convertToFormat(QImage::Format_Grayscale8);    
+    QImage image = selectImage.convertToFormat(QImage::Format_Grayscale8);
 
     cv::Mat in(image.height(),
-                image.width(),
-                CV_8UC1,    //uchar
-                image.bits(),
-                image.bytesPerLine());
+               image.width(),
+               CV_8UC1,    //uchar
+               image.bits(),
+               image.bytesPerLine());
 
     /*
     void Mat::convertTo( OutputArray m, int rtype, double alpha=1, double beta=0 ) const;
@@ -724,14 +746,14 @@ void ImageAlbum::Histogram()
         *series << QPoint(j, Hist.at<float>(j));
     }
 
-//    view->setContentsMargins(-10, -10, -10, -10);
+    //    view->setContentsMargins(-10, -10, -10, -10);
     chart->setAnimationOptions(QChart::AllAnimations);
     chart->setFont(QFont("", 3, 3, false));
     chart->addSeries(series);
     chart->createDefaultAxes();
     chart->setDropShadowEnabled(true);
     chart->setBackgroundVisible(false);
-//    chart->setTheme(QChart::ChartThemeBlueCerulean);
+    //    chart->setTheme(QChart::ChartThemeBlueCerulean);
     chart->legend()->hide();
 }
 
@@ -855,7 +877,7 @@ void ImageAlbum::Blur()
                 out.cols,
                 out.rows,
                 out.step,
-                QImage::Format_Grayscale8); 
+                QImage::Format_Grayscale8);
 
     QSize size = imageView->viewport()->size();
     QPixmap buf = QPixmap::fromImage(image_Blur);
@@ -976,14 +998,14 @@ void ImageAlbum::on_Gamma_sliderReleased()
     Histogram();
 }
 
+// 처방전 작성 버튼 클릭 시 의사 정보, 환자 정보를 처방전 클래스로 전송
 void ImageAlbum::on_Prescription_clicked()
-{
-    //처방전 작성 버튼 클릭 시 의사 정보, 환자 정보를 처방전 클래스로 전송
+{   
     emit sendPrescription(DoctorID, DoctorName, PatientID, PatientName, PatientSex);
     m_prescription->show();
 }
 
-//환자 정보 클래스에서 받아온 환자 정보를 처방전 클래스로 보내기 위해 멤버 변수에 저장
+// 환자 정보 클래스에서 받아온 환자 정보를 처방전 클래스로 보내기 위해 멤버 변수에 저장
 void ImageAlbum::receivePatientInfo(QString ID, QString Name, QString Sex)
 {
     PatientID = ID;
@@ -991,13 +1013,14 @@ void ImageAlbum::receivePatientInfo(QString ID, QString Name, QString Sex)
     PatientSex = Sex;
 }
 
-//환자 정보 클래스에서 받아온 의사 정보를 처방전 클래스로 보내기 위해 멤버 변수에 저장
+// 환자 정보 클래스에서 받아온 의사 정보를 처방전 클래스로 보내기 위해 멤버 변수에 저장
 void ImageAlbum::receiveDoctorInfo(QString ID, QString Name)
 {
     DoctorID = ID;
     DoctorName = Name;
 }
 
+// 처방전 작성 후 작성완료 버튼 클릭 시 서버로 해당 데이터를 보내주기 위한 함수
 void ImageAlbum::receivePrescriptionFinish(QString Data)
 {
     emit sendPrescriptiontoServer(Data);
@@ -1005,32 +1028,18 @@ void ImageAlbum::receivePrescriptionFinish(QString Data)
     m_prescription->close();
 }
 
+// 환자의 이미지 파일이 모두 수신되면 true, 아직 다운 받은 중이면 false 반환
 void ImageAlbum::receiveAllImageFileA(bool AllImageFile)
 {
     AllSendImageCheck = AllImageFile;
 }
 
-//진료 종료 버튼 클릭 시 해당 환자 정보를 서버에 전송 및 해당 환자의 이미지 파일 삭제
-void ImageAlbum::on_EndTreatment_clicked()
+// 진료 종료 버튼 클릭 시 해당 환자 정보를 서버에 전송 및 해당 환자의 이미지 파일 삭제
+void ImageAlbum::receivePatientTreatmentEnd()
 {
-    if(!prescriptionCheck){
-        QMessageBox:: critical(this, "경고", "처방전을 입력해주세요");
-        return;
-    }
-
-    if(!AllSendImageCheck){
-        QMessageBox:: critical(this, "경고", "이미지 업로드 중입니다. "
-                                           "잠시만 기다려주세요");
-        return;
-    }
-
     //진료 종료 버튼 클릭 시 해당 버튼과 처방전 작성 비활성화
     ui->EndTreatment->setDisabled(true);
     ui->Prescription->setDisabled(true);
-
-    //진료 종료 시 해당하는 환자 정보(ID, 이름)를 서버로 전송
-    QString Data = "VTF<CR>" + PatientID + "<CR>" + PatientName;
-    emit sendEndTreatment(Data);
 
     //진료 종료 버튼 클릭 시 해당 환자의 이미지 파일 삭제
     QDir dir("./Image/");
@@ -1039,7 +1048,7 @@ void ImageAlbum::on_EndTreatment_clicked()
     //진료 종료 버튼 클릭 시 환자 관리 클래스로 해당 신호 전송
     emit sendEndSignal();
 
-    //진료 종료 버튼 클릭 시 기존 환자의 사진 담고 있는 listWidget + graphicsView + graphicsScene 클리어
+    //진료 종료 버튼 클릭 시 기존 환자의 사진 담고 있는 listWidget, graphicsView, graphicsScene 클리어
     ui->listWidget->clear();
     prescriptionCheck = false;
 
@@ -1055,6 +1064,25 @@ void ImageAlbum::on_EndTreatment_clicked()
     imageScene->clear();
 }
 
+//진료 종료 버튼 클릭 시 서버로 환자 정보를 전송
+void ImageAlbum::on_EndTreatment_clicked()
+{
+    if(!prescriptionCheck){
+        QMessageBox:: critical(this, "경고", "처방전을 입력해주세요");
+        return;
+    }
+
+    if(!AllSendImageCheck){
+        QMessageBox:: critical(this, "경고", "이미지 업로드 중입니다. "
+                                           "잠시만 기다려주세요");
+        return;
+    }
+
+    //진료 종료 시 해당하는 환자 정보(ID, 이름)를 서버로 전송
+    QString Data = "SEN^VTF<CR>" + PatientID + "<CR>" + PatientName;
+    emit sendEndTreatment(Data);
+}
+
 //스핀박스를 활용하여 폰트 사이즈 변경하는 슬롯
 void ImageAlbum::on_Fontsize_valueChanged(int size)
 {
@@ -1065,7 +1093,6 @@ void ImageAlbum::on_Fontsize_valueChanged(int size)
 void ImageAlbum::receiveCameraStart()
 {
     ui->listWidget->clear();
-
     ui->Brightness->setSliderPosition(0);
     ui->Contrast->setSliderPosition(10);
     ui->Gamma->setSliderPosition(10);
@@ -1079,39 +1106,44 @@ void ImageAlbum::receiveCameraStart()
     ui->Prescription->setDisabled(true);
 }
 
+//처방전 작성 완료 버튼 클릭 시 서버에서 받아온 DB의 저장 성공 여부를 처방전 클래스로 전송
+void ImageAlbum::receivePrescriptionCheck(QString signal)
+{
+    emit sendPrescriptionYesOrNot(signal);
+}
+
 //메인 윈도우에서 프린터 버튼 클릭 시 프린트 다이얼로그 출력 및 프린트 기능 실행
 void ImageAlbum::receivePrintStart()
 {
     QPrinter printer(QPrinter::HighResolution);
-       printer.setFullPage(true);
-       printer.setPageSize(QPageSize::A4);
+    printer.setFullPage(true);
+    printer.setPageSize(QPageSize::A4);
 
-       QPrintDialog* printDialog = new QPrintDialog(&printer, this);
-       if (printDialog->exec() == QDialog::Accepted) {
-           QPainter painter(&printer);
-           //이미지에 해당하는 부분을 캡쳐
-           QPixmap buffer = imageView->grab();
-           QRect rect = printer.pageRect(QPrinter::DevicePixel).toRect();
-           buffer.setDevicePixelRatio(1);
+    QPrintDialog* printDialog = new QPrintDialog(&printer, this);
+    if (printDialog->exec() == QDialog::Accepted) {
+        QPainter painter(&printer);
+        // 이미지에 해당하는 부분을 캡쳐
+        QPixmap buffer = imageView->grab();
+        QRect rect = printer.pageRect(QPrinter::DevicePixel).toRect();
+        buffer.setDevicePixelRatio(1);
 
-           //프린트 시 중앙에 맞춰서 출력하기 위해 좌표 설정 및 resize
-           buffer = buffer.scaled(rect.size(), Qt::KeepAspectRatio, Qt::SmoothTransformation);
-           painter.drawPixmap(rect.center().x()-buffer.width()/2, rect.center().y()-buffer.height()/2, buffer);
-           const QRect rectangle = QRect(10, 10, 1000, 10000);
-           painter.setPen(QPen(QColor(80, 239, 0)));
-           painter.drawText(rectangle, 0, "발행 일자 : " + QDate::currentDate().toString("yyyy-MM-dd"));
-           painter.end();
-       }
+        // 프린트 시 중앙에 맞춰서 출력하기 위해 좌표 설정 및 resize
+        buffer = buffer.scaled(rect.size(), Qt::KeepAspectRatio, Qt::SmoothTransformation);
+        painter.drawPixmap(rect.center().x()-buffer.width()/2, rect.center().y()-buffer.height()/2, buffer);
+        const QRect rectangle = QRect(10, 10, 1000, 10000);
+        painter.setPen(QPen(QColor(80, 239, 0)));
+        painter.drawText(rectangle, 0, "발행 일자 : " + QDate::currentDate().toString("yyyy-MM-dd"));
+        painter.end();
+    }
 }
 
-//콤보박스가 선택되면 해당 선택된 임플란트 종류를 전송
+// 콤보박스가 선택되면 해당 선택된 임플란트 종류를 전송
 void ImageAlbum::on_ImplantcomboBox_activated(int index)
 {
     emit sendImplantType(index);
-    qDebug() << index;
 }
 
-//탭이 바뀌면 각도, 길이 측정 도중에 남아있던 도형 데이터들을 삭제 및 커서모드로 변경
+// 탭이 바뀌면 각도, 길이 측정 도중에 남아있던 도형 데이터들을 삭제 및 커서모드로 변경
 void ImageAlbum::on_tabWidget_currentChanged(int index)
 {
     emit SendType(999);

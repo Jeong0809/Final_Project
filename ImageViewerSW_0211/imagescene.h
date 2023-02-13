@@ -1,3 +1,10 @@
+/*프로그램명 : ImageViewerSW
+파일명 : imagescene.h
+설명 : graphicsview, graphicsscene을 활용하여 원, 사각형, 텍스트, 임플란트 식립, 길이 측정,
+각도 측정 등의 기능을 담고있는 클래스
+작성자 : 이정연
+최종 수정 날짜 : 2023.02.11*/
+
 #ifndef IMAGESCENE_H
 #define IMAGESCENE_H
 

@@ -1,3 +1,12 @@
+/*프로그램명 : ImageViewerSW
+파일명 : mainwindow.cpp
+설명 : 각 클래스들 간의 signal-slot을 연결해주는 connect문을 작성한 부분
+stackedWidget을 통해 login창과 viewer창으로 구분되어 있는 클래스
+작성자 : 이정연
+최종 수정 날짜 : 2023.02.11*/
+
+
+
 #include "mainwindow.h"
 #include "qobjectdefs.h"
 #include "ui_mainwindow.h"
@@ -57,6 +66,9 @@ MainWindow::MainWindow(QWidget *parent)
     connect(m_networkManager, SIGNAL(sendSelectPatient(QString, QString)), m_patientInfo, SLOT(receiveSelectPatient(QString, QString)));
     connect(m_patientInfo, SIGNAL(sendCameraPatient(QString)), m_networkManager, SLOT(newDataSended(QString)));
 
+    //촬영 SW가 작동하지 않아 해당 환자가 촬영을 하지 못했을 때 해당 환자 정보를 서버로 전송
+    connect(m_patientInfo, SIGNAL(sendCameraDelay(QString)), m_networkManager, SLOT(newDataSended(QString)));
+
     //뷰어 SW 로그인 시 기존에 추가되어있던 대기 리스트 환자 목록을 받아와 띄워주기 위한 시그널-슬롯
     connect(m_networkManager, SIGNAL(sendWaitTreatment(int, QString)), m_patientInfo, SLOT(receiveWaitTreatment(int, QString)));
 
@@ -92,6 +104,11 @@ MainWindow::MainWindow(QWidget *parent)
     //프린트 버튼 클릭 시 ImageAlbum 클래스에서 이미지 출력 기능 수행
     connect(this, SIGNAL(sendPrintStart()), m_imageAlbum, SLOT(receivePrintStart()));
 
+    //진료 종료 버튼 클릭 시 서버에서 완료 신호가 오면 환자 관리 클래스로 해당 환자의 진료 종료를 수행
+    connect(m_networkManager, SIGNAL(sendPatientTreatmentEnd()), m_imageAlbum, SLOT(receivePatientTreatmentEnd()));
+
+    //처방전 작성 완료 버튼 클릭 시 DB에서 저장 성공 여부를 확인 후 처방전 클래스로 전송
+    connect(m_networkManager, SIGNAL(sendPrescriptionCheck(QString)), m_imageAlbum, SLOT(receivePrescriptionCheck(QString)));
 }
 
 MainWindow::~MainWindow()
@@ -99,6 +116,7 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
+//로그인이 성공하면 뷰어 프로그램 창으로 widget이 변경
 void MainWindow::ViewerOpen(QString, QString)
 {
     ui->stackedWidget->setCurrentIndex(1);

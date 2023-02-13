@@ -10,29 +10,29 @@
 NetworkManager::NetworkManager(QObject *parent)
     : QObject{parent}
 {
-    socket = new QTcpSocket(this);
+//    socket = new QTcpSocket(this);
 
-    fd_flag = connectToHost("192.168.0.10");
-    connect(socket, SIGNAL(readyRead()), this, SLOT(receiveData()));
-    connect(socket, SIGNAL(disconnected()), this, SLOT(disconnect()));
+//    fd_flag = connectToHost("192.168.0.10");
+//    connect(socket, SIGNAL(readyRead()), this, SLOT(receiveData()));
+//    connect(socket, SIGNAL(disconnected()), this, SLOT(disconnect()));
 
-    if(!fd_flag)
-        qDebug()<<("Socket connect fail\n");
-    else {
-        qDebug()<<("Socket connect success\n");
-        QString connectData = "SEN^CNT<CR>VEW<CR>";
-        QByteArray sendTest = connectData.toStdString().data();
-        socket->write(sendTest);
-    }
+//    if(!fd_flag)
+//        qDebug()<<("Socket connect fail\n");
+//    else {
+//        qDebug()<<("Socket connect success\n");
+//        QString connectData = "SEN^CNT<CR>VEW<CR>";
+//        QByteArray sendTest = connectData.toStdString().data();
+//        socket->write(sendTest);
+//    }
 
-    fileSocket = new QTcpSocket(this);
-    fileSocket->connectToHost("192.168.0.10", 8001);
-    connect(fileSocket, SIGNAL(readyRead()), this, SLOT(receiveFile()));
+//    fileSocket = new QTcpSocket(this);
+//    fileSocket->connectToHost("192.168.0.10", 8001);
+//    connect(fileSocket, SIGNAL(readyRead()), this, SLOT(receiveFile()));
 
-    if(fileSocket->waitForConnected())
-        fileSocket->write("SEN^CNT<CR>VEW<CR>NULL");
-    else
-        qDebug() << ("FileServer connect failed\n");
+//    if(fileSocket->waitForConnected())
+//        fileSocket->write("SEN^CNT<CR>VEW<CR>NULL");
+//    else
+//        qDebug() << ("FileServer connect failed\n");
 }
 
 //서버와 연결이 끊어졌을 때 프로그램을 종료시키는 슬롯
@@ -66,59 +66,6 @@ bool NetworkManager::writeData(QByteArray data)
     }
 }
 
-//void NetworkManager::receiveFile()
-//{
-//    QTcpSocket *socket = dynamic_cast<QTcpSocket*>(sender());
-
-//    if (fileSocket != socket) {
-//        QByteArray arr = socket->readAll();
-//        QString id = QString(arr).split("<CR>")[1];
-
-//        if (id == "VEW") {  //근데 여기서는 굳이 소켓을 멤버변수로 설정하지는 않아도 될 것 같음. 소켓이 하나밖에 없어서..
-//            fileSocket = socket;
-//        }
-//        return;
-//    }
-
-//    if (byteReceived == 0) {                                    // First Time(Block) , var byteReceived is always zero
-//        checkFileName = fileName;                               // 다음 패킷부터 파일이름으로 구분하기 위해 첫 패킷에서 보낸 파일이름을 임시로 저장
-
-//        QDataStream in(fileSocket);
-//        in.device()->seek(0);
-//        in >> totalSize >> byteReceived >> fileName;
-//        if(checkFileName == fileName) return;
-
-//        QFileInfo info(fileName);
-//        currentPID = info.fileName();
-
-//        QDir dir(QString("./Image/%1").arg(currentPID.first(6)));   //ex.P00001
-//        if (!dir.exists())
-//            dir.mkpath(".");
-
-//        QString currentFileName = dir.path() + "/" +info.fileName();
-//        file = new QFile(currentFileName);
-//        file->open(QFile::WriteOnly);
-//    }
-
-//    else {
-//        if(checkFileName == fileName) return;
-//        inBlock = fileSocket->readAll();
-
-//        byteReceived += inBlock.size();
-//        file->write(inBlock);
-//        file->flush();
-//    }
-
-//    if (byteReceived == totalSize) {        // file sending is done
-//        qDebug() << QString("%1 receive completed").arg(fileName);
-//        inBlock.clear();
-//        byteReceived = 0;
-//        totalSize = 0;
-//        file->close();
-//        delete file;
-//    }
-//}
-
 void NetworkManager::receiveFile()
 {
     fileSocket = dynamic_cast<QTcpSocket*>(sender());
@@ -130,7 +77,6 @@ void NetworkManager::receiveFile()
         makeFiles();
     }
 }
-
 
 void NetworkManager::makeFiles()
 {
@@ -222,7 +168,7 @@ void NetworkManager::receiveData()
         QString id = saveData.split("<CR>")[1];
         QString data = saveData.split("<CR>")[2];
 
-        //AWL : PMS에서 대기 환자 추가 시 뷰어의 대기 리스트에도 추가  XXXXXXXXXXXXXXXXXXXXXXX
+        //AWL : PMS에서 대기 환자 추가 시 뷰어의 대기 리스트에도 추가
         if(event == "AWL" && signal == "ACK")
         {
             emit sendWaitingList(id, data);
@@ -234,27 +180,21 @@ void NetworkManager::receiveData()
             emit sendSelectPatient(id, data);
         }
 
-        //PMS 프로그램이 꺼져있을 때 에러 메시지 출력
-        else if(event == "VTS" && signal == "ERR")
-        {
-            QMessageBox::critical(NULL, "경고", "환자 관리 프로그램이 꺼져있어,"
-                                              "해당 환자의 진료를 시작하지 못하였습니다.");
-        }
-
-        //뷰어와 PMS에서 촬영을 시작하는 환자의 진행 상황 추가
+//-----------------------------------------------------------------------------------------------------
+        //촬영SW에서 전달받아 뷰어와 PMS에서 촬영을 시작하는 환자의 진행 상황 추가
         else if(event == "SRQ" && signal == "ACK")
         {
             emit sendPMSCameraPatient(id, data);
         }
 
-        //PMS 프로그램이 꺼져있을 때 에러 메시지 출력
+        //촬영 SW가 꺼져있을 경우 Data로 Null을 전송
         else if(event == "SRQ" && signal == "ERR")
         {
-            QMessageBox::critical(NULL, "경고", "환자 관리 프로그램이 꺼져있어,"
-                                              "해당 환자의 촬영을 시작하지 못하였습니다.");
+            emit sendPMSCameraPatient(id, "Null");
         }
+//------------------------------------------------------------------------------------------------------
 
-        //VLG(로그인) : 뷰어에서 로그인 시 해당 의사 정보로 로그인 여부 확인  XXXXXXXXXXXXXXXXXXXX
+        //VLG(로그인) : 뷰어에서 로그인 시 해당 의사 정보로 로그인 여부 확인
         else if(event == "VLG" && signal == "ACK")
         {
             emit sendLogInCheck(data);
@@ -266,24 +206,10 @@ void NetworkManager::receiveData()
             emit sendPhotoEnd(id);
         }
 
-        //PMS 프로그램이 꺼져있을 때 에러 메시지 출력
-        else if(event == "ISV" && signal == "ERR")
-        {
-            QMessageBox::critical(NULL, "경고", "환자 관리 프로그램이 꺼져있어,"
-                                              "촬영 완료된 환자 정보를 불러오지 못했습니다.");
-        }
-
         //뷰어 프로그램 시작 시 PMS의 대기리스트 정보를 바로 불러와 띄워주기 위한 데이터
         else if(event == "WTR" && signal == "ACK")
         {
             emit sendWaitTreatment(id.toInt(), data);
-        }
-
-        //PMS 프로그램이 꺼져있을 때 에러 메시지 출력
-        else if(event == "WTR" && signal == "ERR")
-        {
-            QMessageBox::critical(NULL, "경고", "환자 관리 프로그램이 꺼져있어,"
-                                              "대기 리스트를 불러오지 못했습니다.");
         }
 
         //처방전 작성 완료 버튼 클릭 시 DB에 저장 여부를 시그널 전송
@@ -298,11 +224,9 @@ void NetworkManager::receiveData()
             emit sendPatientTreatmentEnd();
         }
 
-        //PMS 프로그램이 꺼져있을 때 에러 메시지 출력
-        else if(event == "VTF" && signal == "ERR")
+        else if(event == "CNT" && signal == "ACK" && id == "IMG")
         {
-            QMessageBox::critical(NULL, "경고", "환자 관리 프로그램이 꺼져있어,"
-                                              "진료 종료를 완료하지 못했습니다.");
+            QMessageBox::information(nullptr, "확인", "촬영 SW와 연결이 되었습니다.");
         }
     }
 }

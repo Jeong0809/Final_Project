@@ -49,6 +49,7 @@ signals:
     void sendCameraPatient(QString);
     void sendPatientInfo(QString, QString, QString);
     void sendCameraStart();
+    void sendCameraDelay(QString);
 };
 
 #endif // PATIENTINFO_H

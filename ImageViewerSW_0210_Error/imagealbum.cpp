@@ -71,7 +71,7 @@ ImageAlbum::ImageAlbum(QWidget *parent)
     paintColor = Qt::white;
     ui->LengthResult->setReadOnly(true);
     ui->AngleResult->setReadOnly(true);
-    ui->lineEdit->setPlaceholderText("텍스트를 입력해주세요");
+    ui->lineEdit->setPlaceholderText("텍스트를 입력해주세요...");
 
     ui->tabWidget->setStyleSheet("QTabBar {"
                                 "border: 0px solid #31363B;"

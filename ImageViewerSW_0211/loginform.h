@@ -1,3 +1,9 @@
+/*프로그램명 : ImageViewerSW
+파일명 : loginform.h
+설명 : 뷰어 SW 프로그램 시작 시 의사ID와 의사명으로 로그인 후 다음창으로 넘어갈 수 있도록 구성된 클래스
+작성자 : 이정연
+최종 수정 날짜 : 2023.02.11*/
+
 #ifndef LOGINFORM_H
 #define LOGINFORM_H
 

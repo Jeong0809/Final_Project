@@ -1,3 +1,10 @@
+/*프로그램명 : ImageViewerSW
+파일명 : networkmanager.cpp
+설명 : 서버와 클라이언트(뷰어 SW)간 Event를 통해 데이터를 주고받고 하기 위한 클래스
+작성자 : 이정연
+최종 수정 날짜 : 2023.02.11*/
+
+
 #include "networkmanager.h"
 #include <QBoxLayout>
 #include <QDataStream>
@@ -10,29 +17,29 @@
 NetworkManager::NetworkManager(QObject *parent)
     : QObject{parent}
 {
-//    socket = new QTcpSocket(this);
+    socket = new QTcpSocket(this);
 
-//    fd_flag = connectToHost("192.168.0.39");
-//    connect(socket, SIGNAL(readyRead()), this, SLOT(receiveData()));
-//    connect(socket, SIGNAL(disconnected()), this, SLOT(disconnect()));
+    fd_flag = connectToHost("127.0.0.1");
+    connect(socket, SIGNAL(readyRead()), this, SLOT(receiveData()));
+    connect(socket, SIGNAL(disconnected()), this, SLOT(disconnect()));
 
-//    if(!fd_flag)
-//        qDebug()<<("Socket connect fail\n");
-//    else {
-//        qDebug()<<("Socket connect success\n");
-//        QString connectData = "CNT<CR>VEW<CR>";
-//        QByteArray sendTest = connectData.toStdString().data();
-//        socket->write(sendTest);
-//    }
+    if(!fd_flag)
+        qDebug()<<("Socket connect fail\n");
+    else {
+        qDebug()<<("Socket connect success\n");
+        QString connectData = "SEN^CNT<CR>VEW<CR>";
+        QByteArray sendTest = connectData.toStdString().data();
+        socket->write(sendTest);
+    }
 
-//    fileSocket = new QTcpSocket(this);
-//    fileSocket->connectToHost("192.168.0.39", 8001);
-//    connect(fileSocket, SIGNAL(readyRead()), this, SLOT(receiveFile()));
+    fileSocket = new QTcpSocket(this);
+    fileSocket->connectToHost("127.0.0.1", 8001);
+    connect(fileSocket, SIGNAL(readyRead()), this, SLOT(receiveFile()));
 
-//    if(fileSocket->waitForConnected())
-//        fileSocket->write("CNT<CR>VEW<CR>NULL");
-//    else
-//        qDebug() << ("FileServer connect failed\n");
+    if(fileSocket->waitForConnected())
+        fileSocket->write("SEN^CNT<CR>VEW<CR>NULL");
+    else
+        qDebug() << ("FileServer connect failed\n");
 }
 
 //서버와 연결이 끊어졌을 때 프로그램을 종료시키는 슬롯
@@ -66,60 +73,7 @@ bool NetworkManager::writeData(QByteArray data)
     }
 }
 
-//void NetworkManager::receiveFile()
-//{
-//    QTcpSocket *socket = dynamic_cast<QTcpSocket*>(sender());
-
-//    if (fileSocket != socket) {
-//        QByteArray arr = socket->readAll();
-//        QString id = QString(arr).split("<CR>")[1];
-
-//        if (id == "VEW") {  //근데 여기서는 굳이 소켓을 멤버변수로 설정하지는 않아도 될 것 같음. 소켓이 하나밖에 없어서..
-//            fileSocket = socket;
-//        }
-//        return;
-//    }
-
-//    if (byteReceived == 0) {                                    // First Time(Block) , var byteReceived is always zero
-//        checkFileName = fileName;                               // 다음 패킷부터 파일이름으로 구분하기 위해 첫 패킷에서 보낸 파일이름을 임시로 저장
-
-//        QDataStream in(fileSocket);
-//        in.device()->seek(0);
-//        in >> totalSize >> byteReceived >> fileName;
-//        if(checkFileName == fileName) return;
-
-//        QFileInfo info(fileName);
-//        currentPID = info.fileName();
-
-//        QDir dir(QString("./Image/%1").arg(currentPID.first(6)));   //ex.P00001
-//        if (!dir.exists())
-//            dir.mkpath(".");
-
-//        QString currentFileName = dir.path() + "/" +info.fileName();
-//        file = new QFile(currentFileName);
-//        file->open(QFile::WriteOnly);
-//    }
-
-//    else {
-//        if(checkFileName == fileName) return;
-//        inBlock = fileSocket->readAll();
-
-//        byteReceived += inBlock.size();
-//        file->write(inBlock);
-//        file->flush();
-//    }
-
-//    if (byteReceived == totalSize) {        // file sending is done
-//        qDebug() << QString("%1 receive completed").arg(fileName);
-//        inBlock.clear();
-//        byteReceived = 0;
-//        totalSize = 0;
-//        file->close();
-//        delete file;
-//    }
-//}
-
-void NetworkManager::receiveFile() //P00004 파일 2개짜리로 해보기
+void NetworkManager::receiveFile()
 {
     fileSocket = dynamic_cast<QTcpSocket*>(sender());
     allFile.append(fileSocket->readAll());
@@ -131,8 +85,7 @@ void NetworkManager::receiveFile() //P00004 파일 2개짜리로 해보기
     }
 }
 
-
-void NetworkManager::makeFiles() //P00004 파일 2개짜리로 해보기
+void NetworkManager::makeFiles()
 {
     QByteArray fileInfoArray = allFile.split('|')[0];
     QString totalFileInfo = fileInfoArray.toStdString().c_str();
@@ -211,7 +164,9 @@ void NetworkManager::receiveData()
     socket = static_cast<QTcpSocket*>(sender());
     QByteArray array = socket->readAll();
     saveData = QString(array);
-    qDebug() << "데이터 : " <<saveData;
+    qDebug() << "데이터 : " << saveData;
+    QString signal = saveData.split("^")[0];
+    saveData = saveData.split("^")[1];
 
     if(saveData.contains("<CR", Qt::CaseInsensitive) == true)
     {
@@ -220,40 +175,65 @@ void NetworkManager::receiveData()
         QString id = saveData.split("<CR>")[1];
         QString data = saveData.split("<CR>")[2];
 
-        //AWL : 대기 환자 추가
-        if(event == "AWL")
+        //AWL : PMS에서 대기 환자 추가 시 뷰어의 대기 리스트에도 추가
+        if(event == "AWL" && signal == "ACK")
         {
             emit sendWaitingList(id, data);
         }
 
-        //진료 시작 : 대기 리스트에서 선택된 환자 정보 추가
-        else if(event == "VTS")
+        //VTS(진료 시작) : 대기 리스트에서 선택된 환자 정보 추가
+        else if(event == "VTS" && signal == "ACK")
         {
             emit sendSelectPatient(id, data);
         }
 
-        //PMS에서 촬영을 시작하는 환자의 진행 상황 추가
-        else if(event == "SRQ")
+//-----------------------------------------------------------------------------------------------------
+        //촬영SW에서 전달받아 뷰어와 PMS에서 촬영을 시작하는 환자의 진행 상황 추가
+        else if(event == "SRQ" && signal == "ACK")
         {
             emit sendPMSCameraPatient(id, data);
         }
 
-        //로그인 완료
-        else if(event == "VLG")
+        //촬영 SW가 꺼져있을 경우 Data로 Null을 전송
+        else if(event == "SRQ" && signal == "ERR")
+        {
+            emit sendPMSCameraPatient(id, "Null");
+        }
+//------------------------------------------------------------------------------------------------------
+
+        //VLG(로그인) : 뷰어에서 로그인 시 해당 의사 정보로 로그인 여부 확인
+        else if(event == "VLG" && signal == "ACK")
         {
             emit sendLogInCheck(data);
         }
 
-        //촬영SW에서 촬영 완료를 알리는 상황
-        else if(event == "ISV")
+        //촬영SW에서 환자의 촬영 완료를 알리고 해당 환자 정보 전송
+        else if(event == "ISV" && signal == "ACK")
         {
             emit sendPhotoEnd(id);
         }
 
-        else if(event == "WTR")
+        //뷰어 프로그램 시작 시 PMS의 대기리스트 정보를 바로 불러와 띄워주기 위한 데이터
+        else if(event == "WTR" && signal == "ACK")
         {
             emit sendWaitTreatment(id.toInt(), data);
-            qDebug() << data;
+        }
+
+        //처방전 작성 완료 버튼 클릭 시 DB에 저장 여부를 시그널 전송
+        else if(event == "VNT")
+        {
+            emit sendPrescriptionCheck(signal);
+        }
+
+        //진료 종료 버튼 클릭 시 서버에 환자 관리 클래스를 비워주기 위해 시그널 전송
+        else if(event == "VTF" && signal == "ACK")
+        {
+            emit sendPatientTreatmentEnd();
+        }
+
+        else if(event == "CNT" && signal == "ACK" && id == "IMG")
+        {
+            QMessageBox::information(nullptr, "확인", "촬영 SW와 연결이 되었습니다.");
         }
     }
 }

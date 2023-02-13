@@ -1,3 +1,12 @@
+/*프로그램명 : ImageViewerSW
+파일명 : patientinfo.cpp
+설명 : 서버에서 받아온 환자 정보들을 treeWidget과 tableWidget을 통해 대기 환자 리스트와 환자 정보로 구성하였고
+진료 시작 버튼, 촬영 의뢰 버튼을 통해 타 SW들과 연동되어 있는 클래스
+작성자 : 이정연
+최종 수정 날짜 : 2023.02.11*/
+
+
+
 #include "patientinfo.h"
 #include "ui_patientinfo.h"
 
@@ -115,6 +124,12 @@ void PatientInfo::on_WaitingList_itemClicked(QTreeWidgetItem *item, int column)
 //진료 시작 버튼 클릭 시 대기 환자 리스트에서 선택된 환자의 진행 상황을 진료중으로 변경
 void PatientInfo::on_Treatmentstart_clicked()
 {
+    //환자를 선택하지 않고 진료 시작을 클릭 시 경고 메시지 출력
+    if(selectPatientID == "" && selectPatientName == ""){
+        QMessageBox:: critical(this, "경고", "환자를 선택해 주세요.");
+        return;
+    }
+
     //이미 진료중인 환자가 있을 경우 경고 메시지 출력
     if(!ui->WaitingList->findItems("진료중",  Qt::MatchCaseSensitive, 2).empty()){
         QMessageBox:: critical(this, "경고", "이미 진료중인 환자가 있습니다.");
@@ -258,6 +273,7 @@ void PatientInfo::receivePhotoEnd(QString ID)
     }
 }
 
+//로그인 시 입력되는 의사명을 담당의사란에 입력해줌
 void PatientInfo::receiveDoctorName(QString DoctorID, QString DoctorName)
 {
     ui->lineEdit->setText(DoctorName);
@@ -415,6 +431,7 @@ void PatientInfo::on_Camerastart_clicked()
     emit sendCameraPatient(Data);
 }
 
+//진료 종료 버튼 클릭 시 촬영 의뢰 버튼 비활성화, 진료 시작 버튼 활성화
 void PatientInfo::receiveEndSignal()
 {
     ui->Camerastart->setDisabled(true);

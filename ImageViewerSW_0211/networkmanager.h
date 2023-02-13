@@ -1,3 +1,9 @@
+/*프로그램명 : ImageViewerSW
+파일명 : networkmanager.h
+설명 : 서버와 클라이언트(뷰어 SW)간 Event를 통해 데이터를 주고받고 하기 위한 클래스
+작성자 : 이정연
+최종 수정 날짜 : 2023.02.11*/
+
 #ifndef NETWORKMANAGER_H
 #define NETWORKMANAGER_H
 
@@ -46,6 +52,8 @@ signals:
     void sendWaitTreatment(int, QString);
     void sendImageFile();
     void sendAllImageFile(bool);
+    void sendPatientTreatmentEnd();
+    void sendPrescriptionCheck(QString);
 };
 
 #endif // NETWORKMANAGER_H

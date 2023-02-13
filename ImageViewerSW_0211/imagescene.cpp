@@ -1,3 +1,11 @@
+/*프로그램명 : ImageViewerSW
+파일명 : imagescene.cpp
+설명 : graphicsview, graphicsscene을 활용하여 원, 사각형, 텍스트, 임플란트 식립, 길이 측정,
+각도 측정 등의 기능을 담고있는 클래스
+작성자 : 이정연
+최종 수정 날짜 : 2023.02.11*/
+
+
 #include "imagescene.h"
 #include <QMouseEvent>
 #include <QScrollBar>
@@ -19,7 +27,7 @@ ImageScene::ImageScene(QWidget *parent)
     m_penColor = Qt::red;
     m_penThickness = 6;
 
-    //그리기 타입 초깃값 설정(레이저 그리기)
+    // 그리기 타입 초깃값 설정(레이저 그리기)
     m_drawType = Laser;
     m_currentItem = nullptr;
     m_fontSize = 10;
@@ -30,7 +38,7 @@ ImageScene::ImageScene(QWidget *parent)
 
 void ImageScene::ReceiveType(int type)
 {
-    //각도를 위한 삼각형 데이터는 다른 버튼 클릭 시 바로 삭제
+    // 각도를 위한 삼각형 데이터는 다른 버튼 클릭 시 바로 삭제
     if(!m_angleList.empty()){
         foreach(auto item, m_angleList)
             removeItem(item);
@@ -38,7 +46,7 @@ void ImageScene::ReceiveType(int type)
     }
     m_angleList.clear();
 
-    //길이를 위한 데이터는 다른 버튼 클릭 시 바로 삭제
+    // 길이를 위한 데이터는 다른 버튼 클릭 시 바로 삭제
     if(!m_lengthList.empty()){
         foreach(auto item, m_lengthList)
             removeItem(item);
@@ -46,7 +54,7 @@ void ImageScene::ReceiveType(int type)
     }
     m_lengthList.clear();
 
-    //레이저를 위한 데이터는 다른 버튼 클릭 시 바로 삭제
+    // 레이저를 위한 데이터는 다른 버튼 클릭 시 바로 삭제
     if(!m_laserList.empty()){
         foreach(auto item, m_laserList)
             removeItem(item);
@@ -54,7 +62,7 @@ void ImageScene::ReceiveType(int type)
     }
     m_laserList.clear();
 
-    //임플란트를 위한 데이터는 다른 버튼 클릭 시 바로 삭제
+    // 임플란트를 위한 데이터는 다른 버튼 클릭 시 바로 삭제
     if(!m_implantList.empty()){
         foreach(auto item, m_implantList)
             removeItem(item);
@@ -63,35 +71,42 @@ void ImageScene::ReceiveType(int type)
     m_implantList.clear();
     point = 0;
 
+    // Lines : 자유곡선
     if(type == DrawType::Lines){
         m_drawType = Lines;
     }
 
+    // FreeHand : 폐곡선
     else if(type == DrawType::FreeHand){
         m_drawType = FreeHand;
     }
 
+    // Laser : 레이저 모드 (그렸던 데이터가 저장되지 않음)
     else if(type == DrawType::Laser){
         m_drawType = Laser;
     }
 
+    // Cursor : 삽입된 도형, 텍스트 이동 모드
     else if(type == DrawType::Cursor){
         m_drawType = Cursor;
     }
 
+    // Ellipse : 원형 삽입
     else if(type == DrawType::Ellipse){
         m_drawType = Ellipse;
     }
 
+    // Rectangle : 사각형 삽입
     else if(type == DrawType::Rectangle){
         m_drawType = Rectangle;
     }
 
+    // Text : 간단한 텍스트 입력
     else if(type == DrawType::Text){
         m_drawType = Text;
     }
 
-    //Delete : 선택된 아이템 삭제
+    // Delete : 선택된 아이템 삭제
     else if(type == DrawType::Delete){
         m_drawType = Delete;
         foreach(auto item, selectedItems())
@@ -99,7 +114,7 @@ void ImageScene::ReceiveType(int type)
         update();
     }
 
-    //Clear : 원본을 눌렀을 때 저장되어있던 원, 사각형, 텍스트, 이미지 데이터 삭제
+    // Clear : 원본을 눌렀을 때 저장되어있던 원, 사각형, 텍스트, 이미지 데이터 삭제
     else if(type == DrawType::Clear){
         m_ellipseList.clear();
         m_rectList.clear();
@@ -110,21 +125,22 @@ void ImageScene::ReceiveType(int type)
         m_pathList.clear();
     }
 
-    //Ceph, Pano 길이 측정 기능
+    // Length : Ceph, Pano 길이 측정 기능
     else if(type == DrawType::Length){
         m_drawType = Length;
     }
 
-    //각도 측정 기능
+    // Angle : 각도 측정 기능
     else if(type == DrawType::Angle){
         m_drawType = Angle;
     }
 
-    //캡쳐 기능
+    // Capture : 원하는 영역 캡쳐 기능
     else if(type == DrawType::Capture){
         m_drawType = Capture;
     }
 
+    // Implant : 임플란트 식립 기능
     else if(type == DrawType::Implant){
         m_drawType = Implant;
     }
@@ -172,6 +188,7 @@ void ImageScene::ReceiveType(int type)
     }
 }
 
+// spinBox에서 텍스트 폰트 사이즈를 받아오면 해당 텍스트의 폰트 사이즈 변경
 void ImageScene::ReceiveFontSize(int size)
 {
     m_fontSize = size;
@@ -188,11 +205,13 @@ void ImageScene::ReceiveFontSize(int size)
     }
 }
 
+// lineEdit에서 텍스트 내용을 받아오면 해당 텍스트 내용을 출력
 void ImageScene::ReceiveText(QString Text)
 {
     inputText = Text;
 }
 
+// ColorDialog에서 색상값을 받아오면 해당 도형이나 텍스트의 색상 변경
 void ImageScene::ReceiveBrushColor(QColor paintColor)
 {
     m_penColor = paintColor;
@@ -233,6 +252,7 @@ void ImageScene::ReceiveBrushColor(QColor paintColor)
     }
 }
 
+// spinBox에서 펜의 사이즈를 받아오면 해당 도형의 두께 변경
 void ImageScene::ReceiveThickness(int Thickness)
 {
     m_penThickness = Thickness;
@@ -820,6 +840,7 @@ void ImageScene::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
     QGraphicsScene::mouseMoveEvent(event);
 }
 
+//GraphicsScene에 타원형을 그리기 위한 함수
 void ImageScene::addEllipseItem(QPointF stPos, QPointF edPos)
 {
     QRectF rect = QRectF(stPos, edPos).normalized();
@@ -833,6 +854,7 @@ void ImageScene::addEllipseItem(QPointF stPos, QPointF edPos)
     m_ellipseList.append(ellipseItem);
 }
 
+//GraphicsScene에 사각형을 그리기 위한 함수
 void ImageScene::addRectItem(QPointF stPos, QPointF edPos)
 {
     QRectF rect = QRectF(stPos, edPos).normalized();
@@ -843,6 +865,7 @@ void ImageScene::addRectItem(QPointF stPos, QPointF edPos)
     m_rectList.append(rectItem);
 }
 
+//GraphicsScene에 텍스트를 입력하기 위한 함수
 void ImageScene::addTextItem(QPointF stPos)
 {
     QGraphicsSimpleTextItem *textItem = new QGraphicsSimpleTextItem(inputText);
@@ -850,7 +873,6 @@ void ImageScene::addTextItem(QPointF stPos)
     Font.setPointSize(m_fontSize);
     Font.setBold(true);
     Font.setStyleHint(QFont::Courier);
-
     textItem->setFlags(QGraphicsItem::ItemIsSelectable);
     textItem->setPos(stPos);
     textItem->setFont(Font);
