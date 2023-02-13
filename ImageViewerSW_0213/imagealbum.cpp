@@ -57,6 +57,7 @@ ImageAlbum::ImageAlbum(QWidget *parent)
     ui->Angle->setIcon(QIcon("./Icon/angle.png"));
     ui->LengthMeasurement->setIcon(QIcon("./Icon/length.png"));
 
+    // 이미지 정보 및 촬영일자는 읽기 전용으로 설정
     ui->ImageInfo->setReadOnly(true);
     ui->PhotoDate->setReadOnly(true);
 
@@ -82,6 +83,7 @@ ImageAlbum::ImageAlbum(QWidget *parent)
     // 서버로부터 이미지 파일 수신 완료되면 true로 변경
     AllSendImageCheck = false;
     paintColor = Qt::white;
+    // 텍스트 데이터 입력란에 입력하기 전의 텍스트 값을 설정
     ui->lineEdit->setPlaceholderText("텍스트를 입력해주세요...");
 
     ui->tabWidget->setStyleSheet("QTabBar {"
@@ -97,7 +99,6 @@ ImageAlbum::ImageAlbum(QWidget *parent)
                                  "border-right: 2px solid #ED8817;"
                                  "border-bottom: 2px solid #ED8817;"
                                  "}");
-
     ui->Prescription->setStyleSheet("QPushButton { "
                                     "background-color: #ED8817;"
                                     "border-radius:10px;"
@@ -134,7 +135,6 @@ ImageAlbum::ImageAlbum(QWidget *parent)
                                     "min-width: 80px;"
                                     "outline: 0; "
                                     "}");
-
     ui->EndTreatment->setStyleSheet("QPushButton { "
                                     "background-color: #ED8817;"
                                     "border-radius:10px;"
@@ -171,7 +171,6 @@ ImageAlbum::ImageAlbum(QWidget *parent)
                                     "min-width: 80px;"
                                     "outline: 0; "
                                     "}");
-
     ui->OrigImage->setStyleSheet("QToolButton { "
                                  "background-color: qlineargradient(spread:pad, x1:0.0, y1:0.0, x2:1, "
                                  "y2:1, stop:0 rgba(150, 150, 150, 50), stop:1 rgba(30, 30, 30, 100));"
@@ -206,115 +205,115 @@ ImageAlbum::ImageAlbum(QWidget *parent)
                                "border-radius:10px;"
                                "}");
     ui->VReverse->setStyleSheet("QToolButton { "
-                               "background-color: qlineargradient(spread:pad, x1:0.0, y1:0.0, x2:1, "
-                               "y2:1, stop:0 rgba(150, 150, 150, 50), stop:1 rgba(30, 30, 30, 100));"
-                               "border-radius:10px;"
-                               "}"
+                                "background-color: qlineargradient(spread:pad, x1:0.0, y1:0.0, x2:1, "
+                                "y2:1, stop:0 rgba(150, 150, 150, 50), stop:1 rgba(30, 30, 30, 100));"
+                                "border-radius:10px;"
+                                "}"
 
-                               "QToolButton:hover { "
-                               "background-color: qlineargradient(spread:pad, x1:0.0, y1:0.0, x2:1, "
-                               "y2:1, stop:0 rgba(150, 150, 150, 50), stop:1 rgba(90, 90, 90, 100));"
-                               "border-radius:10px;"
-                               "}");
+                                "QToolButton:hover { "
+                                "background-color: qlineargradient(spread:pad, x1:0.0, y1:0.0, x2:1, "
+                                "y2:1, stop:0 rgba(150, 150, 150, 50), stop:1 rgba(90, 90, 90, 100));"
+                                "border-radius:10px;"
+                                "}");
     ui->HReverse->setStyleSheet("QToolButton { "
-                               "background-color: qlineargradient(spread:pad, x1:0.0, y1:0.0, x2:1, "
-                               "y2:1, stop:0 rgba(150, 150, 150, 50), stop:1 rgba(30, 30, 30, 100));"
-                               "border-radius:10px;"
-                               "}"
+                                "background-color: qlineargradient(spread:pad, x1:0.0, y1:0.0, x2:1, "
+                                "y2:1, stop:0 rgba(150, 150, 150, 50), stop:1 rgba(30, 30, 30, 100));"
+                                "border-radius:10px;"
+                                "}"
 
-                               "QToolButton:hover { "
-                               "background-color: qlineargradient(spread:pad, x1:0.0, y1:0.0, x2:1, "
-                               "y2:1, stop:0 rgba(150, 150, 150, 50), stop:1 rgba(90, 90, 90, 100));"
-                               "border-radius:10px;"
-                               "}");
+                                "QToolButton:hover { "
+                                "background-color: qlineargradient(spread:pad, x1:0.0, y1:0.0, x2:1, "
+                                "y2:1, stop:0 rgba(150, 150, 150, 50), stop:1 rgba(90, 90, 90, 100));"
+                                "border-radius:10px;"
+                                "}");
     ui->OrigImage2->setStyleSheet("QToolButton { "
-                               "background-color: qlineargradient(spread:pad, x1:0.0, y1:0.0, x2:1, "
-                               "y2:1, stop:0 rgba(150, 150, 150, 50), stop:1 rgba(30, 30, 30, 100));"
-                               "border-radius:10px;"
-                               "}"
+                                  "background-color: qlineargradient(spread:pad, x1:0.0, y1:0.0, x2:1, "
+                                  "y2:1, stop:0 rgba(150, 150, 150, 50), stop:1 rgba(30, 30, 30, 100));"
+                                  "border-radius:10px;"
+                                  "}"
 
-                               "QToolButton:hover { "
-                               "background-color: qlineargradient(spread:pad, x1:0.0, y1:0.0, x2:1, "
-                               "y2:1, stop:0 rgba(150, 150, 150, 50), stop:1 rgba(90, 90, 90, 100));"
-                               "border-radius:10px;"
-                               "}");
+                                  "QToolButton:hover { "
+                                  "background-color: qlineargradient(spread:pad, x1:0.0, y1:0.0, x2:1, "
+                                  "y2:1, stop:0 rgba(150, 150, 150, 50), stop:1 rgba(90, 90, 90, 100));"
+                                  "border-radius:10px;"
+                                  "}");
     ui->Brush->setStyleSheet("QToolButton { "
-                               "background-color: qlineargradient(spread:pad, x1:0.0, y1:0.0, x2:1, "
-                               "y2:1, stop:0 rgba(150, 150, 150, 50), stop:1 rgba(30, 30, 30, 100));"
-                               "border-radius:10px;"
-                               "}"
+                             "background-color: qlineargradient(spread:pad, x1:0.0, y1:0.0, x2:1, "
+                             "y2:1, stop:0 rgba(150, 150, 150, 50), stop:1 rgba(30, 30, 30, 100));"
+                             "border-radius:10px;"
+                             "}"
 
-                               "QToolButton:hover { "
-                               "background-color: qlineargradient(spread:pad, x1:0.0, y1:0.0, x2:1, "
-                               "y2:1, stop:0 rgba(150, 150, 150, 50), stop:1 rgba(90, 90, 90, 100));"
-                               "border-radius:10px;"
-                               "}");
+                             "QToolButton:hover { "
+                             "background-color: qlineargradient(spread:pad, x1:0.0, y1:0.0, x2:1, "
+                             "y2:1, stop:0 rgba(150, 150, 150, 50), stop:1 rgba(90, 90, 90, 100));"
+                             "border-radius:10px;"
+                             "}");
     ui->RightRotate->setStyleSheet("QToolButton { "
-                               "background-color: qlineargradient(spread:pad, x1:0.0, y1:0.0, x2:1, "
-                               "y2:1, stop:0 rgba(150, 150, 150, 50), stop:1 rgba(30, 30, 30, 100));"
-                               "border-radius:10px;"
-                               "}"
+                                   "background-color: qlineargradient(spread:pad, x1:0.0, y1:0.0, x2:1, "
+                                   "y2:1, stop:0 rgba(150, 150, 150, 50), stop:1 rgba(30, 30, 30, 100));"
+                                   "border-radius:10px;"
+                                   "}"
 
-                               "QToolButton:hover { "
-                               "background-color: qlineargradient(spread:pad, x1:0.0, y1:0.0, x2:1, "
-                               "y2:1, stop:0 rgba(150, 150, 150, 50), stop:1 rgba(90, 90, 90, 100));"
-                               "border-radius:10px;"
-                               "}");
+                                   "QToolButton:hover { "
+                                   "background-color: qlineargradient(spread:pad, x1:0.0, y1:0.0, x2:1, "
+                                   "y2:1, stop:0 rgba(150, 150, 150, 50), stop:1 rgba(90, 90, 90, 100));"
+                                   "border-radius:10px;"
+                                   "}");
     ui->LeftRotate->setStyleSheet("QToolButton { "
-                               "background-color: qlineargradient(spread:pad, x1:0.0, y1:0.0, x2:1, "
-                               "y2:1, stop:0 rgba(150, 150, 150, 50), stop:1 rgba(30, 30, 30, 100));"
-                               "border-radius:10px;"
-                               "}"
+                                  "background-color: qlineargradient(spread:pad, x1:0.0, y1:0.0, x2:1, "
+                                  "y2:1, stop:0 rgba(150, 150, 150, 50), stop:1 rgba(30, 30, 30, 100));"
+                                  "border-radius:10px;"
+                                  "}"
 
-                               "QToolButton:hover { "
-                               "background-color: qlineargradient(spread:pad, x1:0.0, y1:0.0, x2:1, "
-                               "y2:1, stop:0 rgba(150, 150, 150, 50), stop:1 rgba(90, 90, 90, 100));"
-                               "border-radius:10px;"
-                               "}");
+                                  "QToolButton:hover { "
+                                  "background-color: qlineargradient(spread:pad, x1:0.0, y1:0.0, x2:1, "
+                                  "y2:1, stop:0 rgba(150, 150, 150, 50), stop:1 rgba(90, 90, 90, 100));"
+                                  "border-radius:10px;"
+                                  "}");
     ui->Blur->setStyleSheet("QToolButton { "
-                               "background-color: qlineargradient(spread:pad, x1:0.0, y1:0.0, x2:1, "
-                               "y2:1, stop:0 rgba(150, 150, 150, 50), stop:1 rgba(30, 30, 30, 100));"
-                               "border-radius:10px;"
-                               "}"
+                            "background-color: qlineargradient(spread:pad, x1:0.0, y1:0.0, x2:1, "
+                            "y2:1, stop:0 rgba(150, 150, 150, 50), stop:1 rgba(30, 30, 30, 100));"
+                            "border-radius:10px;"
+                            "}"
 
-                               "QToolButton:hover { "
-                               "background-color: qlineargradient(spread:pad, x1:0.0, y1:0.0, x2:1, "
-                               "y2:1, stop:0 rgba(150, 150, 150, 50), stop:1 rgba(90, 90, 90, 100));"
-                               "border-radius:10px;"
-                               "}");
+                            "QToolButton:hover { "
+                            "background-color: qlineargradient(spread:pad, x1:0.0, y1:0.0, x2:1, "
+                            "y2:1, stop:0 rgba(150, 150, 150, 50), stop:1 rgba(90, 90, 90, 100));"
+                            "border-radius:10px;"
+                            "}");
     ui->Lines->setStyleSheet("QToolButton { "
-                               "background-color: qlineargradient(spread:pad, x1:0.0, y1:0.0, x2:1, "
-                               "y2:1, stop:0 rgba(150, 150, 150, 50), stop:1 rgba(30, 30, 30, 100));"
-                               "border-radius:10px;"
-                               "}"
+                             "background-color: qlineargradient(spread:pad, x1:0.0, y1:0.0, x2:1, "
+                             "y2:1, stop:0 rgba(150, 150, 150, 50), stop:1 rgba(30, 30, 30, 100));"
+                             "border-radius:10px;"
+                             "}"
 
-                               "QToolButton:hover { "
-                               "background-color: qlineargradient(spread:pad, x1:0.0, y1:0.0, x2:1, "
-                               "y2:1, stop:0 rgba(150, 150, 150, 50), stop:1 rgba(90, 90, 90, 100));"
-                               "border-radius:10px;"
-                               "}");
+                             "QToolButton:hover { "
+                             "background-color: qlineargradient(spread:pad, x1:0.0, y1:0.0, x2:1, "
+                             "y2:1, stop:0 rgba(150, 150, 150, 50), stop:1 rgba(90, 90, 90, 100));"
+                             "border-radius:10px;"
+                             "}");
     ui->Sharpening->setStyleSheet("QToolButton { "
-                               "background-color: qlineargradient(spread:pad, x1:0.0, y1:0.0, x2:1, "
-                               "y2:1, stop:0 rgba(150, 150, 150, 50), stop:1 rgba(30, 30, 30, 100));"
-                               "border-radius:10px;"
-                               "}"
+                                  "background-color: qlineargradient(spread:pad, x1:0.0, y1:0.0, x2:1, "
+                                  "y2:1, stop:0 rgba(150, 150, 150, 50), stop:1 rgba(30, 30, 30, 100));"
+                                  "border-radius:10px;"
+                                  "}"
 
-                               "QToolButton:hover { "
-                               "background-color: qlineargradient(spread:pad, x1:0.0, y1:0.0, x2:1, "
-                               "y2:1, stop:0 rgba(150, 150, 150, 50), stop:1 rgba(90, 90, 90, 100));"
-                               "border-radius:10px;"
-                               "}");
+                                  "QToolButton:hover { "
+                                  "background-color: qlineargradient(spread:pad, x1:0.0, y1:0.0, x2:1, "
+                                  "y2:1, stop:0 rgba(150, 150, 150, 50), stop:1 rgba(90, 90, 90, 100));"
+                                  "border-radius:10px;"
+                                  "}");
     ui->HistEqual->setStyleSheet("QToolButton { "
-                               "background-color: qlineargradient(spread:pad, x1:0.0, y1:0.0, x2:1, "
-                               "y2:1, stop:0 rgba(150, 150, 150, 50), stop:1 rgba(30, 30, 30, 100));"
-                               "border-radius:10px;"
-                               "}"
+                                 "background-color: qlineargradient(spread:pad, x1:0.0, y1:0.0, x2:1, "
+                                 "y2:1, stop:0 rgba(150, 150, 150, 50), stop:1 rgba(30, 30, 30, 100));"
+                                 "border-radius:10px;"
+                                 "}"
 
-                               "QToolButton:hover { "
-                               "background-color: qlineargradient(spread:pad, x1:0.0, y1:0.0, x2:1, "
-                               "y2:1, stop:0 rgba(150, 150, 150, 50), stop:1 rgba(90, 90, 90, 100));"
-                               "border-radius:10px;"
-                               "}");
+                                 "QToolButton:hover { "
+                                 "background-color: qlineargradient(spread:pad, x1:0.0, y1:0.0, x2:1, "
+                                 "y2:1, stop:0 rgba(150, 150, 150, 50), stop:1 rgba(90, 90, 90, 100));"
+                                 "border-radius:10px;"
+                                 "}");
     ui->Reverse->setStyleSheet("QToolButton { "
                                "background-color: qlineargradient(spread:pad, x1:0.0, y1:0.0, x2:1, "
                                "y2:1, stop:0 rgba(150, 150, 150, 50), stop:1 rgba(30, 30, 30, 100));"
@@ -338,60 +337,60 @@ ImageAlbum::ImageAlbum(QWidget *parent)
                                 "border-radius:10px;"
                                 "}");
     ui->Laser->setStyleSheet("QToolButton { "
-                                "background-color: qlineargradient(spread:pad, x1:0.0, y1:0.0, x2:1, "
-                                "y2:1, stop:0 rgba(150, 150, 150, 50), stop:1 rgba(30, 30, 30, 100));"
-                                "border-radius:10px;"
-                                "}"
+                             "background-color: qlineargradient(spread:pad, x1:0.0, y1:0.0, x2:1, "
+                             "y2:1, stop:0 rgba(150, 150, 150, 50), stop:1 rgba(30, 30, 30, 100));"
+                             "border-radius:10px;"
+                             "}"
 
-                                "QToolButton:hover { "
-                                "background-color: qlineargradient(spread:pad, x1:0.0, y1:0.0, x2:1, "
-                                "y2:1, stop:0 rgba(150, 150, 150, 50), stop:1 rgba(90, 90, 90, 100));"
-                                "border-radius:10px;"
-                                "}");
+                             "QToolButton:hover { "
+                             "background-color: qlineargradient(spread:pad, x1:0.0, y1:0.0, x2:1, "
+                             "y2:1, stop:0 rgba(150, 150, 150, 50), stop:1 rgba(90, 90, 90, 100));"
+                             "border-radius:10px;"
+                             "}");
     ui->Rectangle->setStyleSheet("QToolButton { "
-                                "background-color: qlineargradient(spread:pad, x1:0.0, y1:0.0, x2:1, "
-                                "y2:1, stop:0 rgba(150, 150, 150, 50), stop:1 rgba(30, 30, 30, 100));"
-                                "border-radius:10px;"
-                                "}"
+                                 "background-color: qlineargradient(spread:pad, x1:0.0, y1:0.0, x2:1, "
+                                 "y2:1, stop:0 rgba(150, 150, 150, 50), stop:1 rgba(30, 30, 30, 100));"
+                                 "border-radius:10px;"
+                                 "}"
 
-                                "QToolButton:hover { "
-                                "background-color: qlineargradient(spread:pad, x1:0.0, y1:0.0, x2:1, "
-                                "y2:1, stop:0 rgba(150, 150, 150, 50), stop:1 rgba(90, 90, 90, 100));"
-                                "border-radius:10px;"
-                                "}");
+                                 "QToolButton:hover { "
+                                 "background-color: qlineargradient(spread:pad, x1:0.0, y1:0.0, x2:1, "
+                                 "y2:1, stop:0 rgba(150, 150, 150, 50), stop:1 rgba(90, 90, 90, 100));"
+                                 "border-radius:10px;"
+                                 "}");
     ui->Ellipse->setStyleSheet("QToolButton { "
-                                "background-color: qlineargradient(spread:pad, x1:0.0, y1:0.0, x2:1, "
-                                "y2:1, stop:0 rgba(150, 150, 150, 50), stop:1 rgba(30, 30, 30, 100));"
-                                "border-radius:10px;"
-                                "}"
+                               "background-color: qlineargradient(spread:pad, x1:0.0, y1:0.0, x2:1, "
+                               "y2:1, stop:0 rgba(150, 150, 150, 50), stop:1 rgba(30, 30, 30, 100));"
+                               "border-radius:10px;"
+                               "}"
 
-                                "QToolButton:hover { "
-                                "background-color: qlineargradient(spread:pad, x1:0.0, y1:0.0, x2:1, "
-                                "y2:1, stop:0 rgba(150, 150, 150, 50), stop:1 rgba(90, 90, 90, 100));"
-                                "border-radius:10px;"
-                                "}");
+                               "QToolButton:hover { "
+                               "background-color: qlineargradient(spread:pad, x1:0.0, y1:0.0, x2:1, "
+                               "y2:1, stop:0 rgba(150, 150, 150, 50), stop:1 rgba(90, 90, 90, 100));"
+                               "border-radius:10px;"
+                               "}");
     ui->Delete->setStyleSheet("QToolButton { "
-                                "background-color: qlineargradient(spread:pad, x1:0.0, y1:0.0, x2:1, "
-                                "y2:1, stop:0 rgba(150, 150, 150, 50), stop:1 rgba(30, 30, 30, 100));"
-                                "border-radius:10px;"
-                                "}"
+                              "background-color: qlineargradient(spread:pad, x1:0.0, y1:0.0, x2:1, "
+                              "y2:1, stop:0 rgba(150, 150, 150, 50), stop:1 rgba(30, 30, 30, 100));"
+                              "border-radius:10px;"
+                              "}"
 
-                                "QToolButton:hover { "
-                                "background-color: qlineargradient(spread:pad, x1:0.0, y1:0.0, x2:1, "
-                                "y2:1, stop:0 rgba(150, 150, 150, 50), stop:1 rgba(90, 90, 90, 100));"
-                                "border-radius:10px;"
-                                "}");
+                              "QToolButton:hover { "
+                              "background-color: qlineargradient(spread:pad, x1:0.0, y1:0.0, x2:1, "
+                              "y2:1, stop:0 rgba(150, 150, 150, 50), stop:1 rgba(90, 90, 90, 100));"
+                              "border-radius:10px;"
+                              "}");
     ui->Cursor->setStyleSheet("QToolButton { "
-                                "background-color: qlineargradient(spread:pad, x1:0.0, y1:0.0, x2:1, "
-                                "y2:1, stop:0 rgba(150, 150, 150, 50), stop:1 rgba(30, 30, 30, 100));"
-                                "border-radius:10px;"
-                                "}"
+                              "background-color: qlineargradient(spread:pad, x1:0.0, y1:0.0, x2:1, "
+                              "y2:1, stop:0 rgba(150, 150, 150, 50), stop:1 rgba(30, 30, 30, 100));"
+                              "border-radius:10px;"
+                              "}"
 
-                                "QToolButton:hover { "
-                                "background-color: qlineargradient(spread:pad, x1:0.0, y1:0.0, x2:1, "
-                                "y2:1, stop:0 rgba(150, 150, 150, 50), stop:1 rgba(90, 90, 90, 100));"
-                                "border-radius:10px;"
-                                "}");
+                              "QToolButton:hover { "
+                              "background-color: qlineargradient(spread:pad, x1:0.0, y1:0.0, x2:1, "
+                              "y2:1, stop:0 rgba(150, 150, 150, 50), stop:1 rgba(90, 90, 90, 100));"
+                              "border-radius:10px;"
+                              "}");
     ui->LengthMeasurement->setStyleSheet("QToolButton { "
                                          "background-color: qlineargradient(spread:pad, x1:0.0, y1:0.0, x2:1, "
                                          "y2:1, stop:0 rgba(150, 150, 150, 50), stop:1 rgba(30, 30, 30, 100));"
@@ -414,28 +413,28 @@ ImageAlbum::ImageAlbum(QWidget *parent)
                              "y2:1, stop:0 rgba(150, 150, 150, 50), stop:1 rgba(90, 90, 90, 100));"
                              "border-radius:10px;"
                              "}");
-     ui->Capture->setStyleSheet("QToolButton { "
-                                "background-color: qlineargradient(spread:pad, x1:0.0, y1:0.0, x2:1, "
-                                "y2:1, stop:0 rgba(150, 150, 150, 50), stop:1 rgba(30, 30, 30, 100));"
-                                "border-radius:10px;"
-                                "}"
+    ui->Capture->setStyleSheet("QToolButton { "
+                               "background-color: qlineargradient(spread:pad, x1:0.0, y1:0.0, x2:1, "
+                               "y2:1, stop:0 rgba(150, 150, 150, 50), stop:1 rgba(30, 30, 30, 100));"
+                               "border-radius:10px;"
+                               "}"
 
-                                "QToolButton:hover { "
-                                "background-color: qlineargradient(spread:pad, x1:0.0, y1:0.0, x2:1, "
-                                "y2:1, stop:0 rgba(150, 150, 150, 50), stop:1 rgba(90, 90, 90, 100));"
-                                "border-radius:10px;"
-                                "}");
-     ui->Implant->setStyleSheet("QToolButton { "
-                                "background-color: qlineargradient(spread:pad, x1:0.0, y1:0.0, x2:1, "
-                                "y2:1, stop:0 rgba(150, 150, 150, 50), stop:1 rgba(30, 30, 30, 100));"
-                                "border-radius:10px;"
-                                "}"
+                               "QToolButton:hover { "
+                               "background-color: qlineargradient(spread:pad, x1:0.0, y1:0.0, x2:1, "
+                               "y2:1, stop:0 rgba(150, 150, 150, 50), stop:1 rgba(90, 90, 90, 100));"
+                               "border-radius:10px;"
+                               "}");
+    ui->Implant->setStyleSheet("QToolButton { "
+                               "background-color: qlineargradient(spread:pad, x1:0.0, y1:0.0, x2:1, "
+                               "y2:1, stop:0 rgba(150, 150, 150, 50), stop:1 rgba(30, 30, 30, 100));"
+                               "border-radius:10px;"
+                               "}"
 
-                                "QToolButton:hover { "
-                                "background-color: qlineargradient(spread:pad, x1:0.0, y1:0.0, x2:1, "
-                                "y2:1, stop:0 rgba(150, 150, 150, 50), stop:1 rgba(90, 90, 90, 100));"
-                                "border-radius:10px;"
-                                "}");
+                               "QToolButton:hover { "
+                               "background-color: qlineargradient(spread:pad, x1:0.0, y1:0.0, x2:1, "
+                               "y2:1, stop:0 rgba(150, 150, 150, 50), stop:1 rgba(90, 90, 90, 100));"
+                               "border-radius:10px;"
+                               "}");
 
     imageView->setGeometry(6, 6, 600, 600);
     imageView->setSizeAdjustPolicy(QAbstractScrollArea::AdjustToContents);
@@ -444,8 +443,10 @@ ImageAlbum::ImageAlbum(QWidget *parent)
     imageView->setAlignment(Qt::AlignCenter);
     imageView->setScene(imageScene);
 
+    // 리스트 위젯에서 이미지 클릭 시 GraphicsView에 해당 이미지 추가
     connect(ui->listWidget, SIGNAL(itemDoubleClicked(QListWidgetItem*)), this, SLOT(selectItem(QListWidgetItem*)));
 
+    // 아이콘 클릭 시 해당 함수 실행
     connect(ui->ZoomIn, SIGNAL(clicked()), this, SLOT(ZoomIn()));
     connect(ui->ZoomOut, SIGNAL(clicked()), this, SLOT(ZoomOut()));
     connect(ui->LeftRotate, SIGNAL(clicked()), this, SLOT(LeftRotate()));
@@ -476,11 +477,15 @@ ImageAlbum::ImageAlbum(QWidget *parent)
     connect(ui->Implant, SIGNAL(clicked()), this, SLOT(Implant()));
     connect(ui->Gamma, SIGNAL(valueChanged(int)), this, SLOT(Gamma(int)));
 
-    /*GraphicsView에 펜 색상, 펜 두께, 선인지 도형인지를 구분하여 시그널 전송*/
+    // GraphicsView에 펜 색상, 펜 두께, 선인지 도형인지를 구분하여 시그널 전송
     connect(this, SIGNAL(SendThickness(int)), imageScene, SLOT(ReceiveThickness(int)));
     connect(this, SIGNAL(SendBrushColor(QColor)), imageScene, SLOT(ReceiveBrushColor(QColor)));
     connect(this, SIGNAL(SendType(int)), imageScene, SLOT(ReceiveType(int)));
+
+    // 입력한 텍스트 데이터를 ImageScene 클래스로 전송
     connect(this, SIGNAL(SendText(QString)), imageScene, SLOT(ReceiveText(QString)));
+
+    // 실제 길이를 측정하기 위해 이미지 원본 사이즈와 scaled된 이미지 사이즈를 ImageScene 클래스로 전송
     connect(this, SIGNAL(SendLength(int, int, int, int, QString)), imageScene, SLOT(ReceiveLength(int, int, int, int, QString)));
 
     // 텍스트 사이즈를 변경하기 위해 시그널 전송
@@ -514,12 +519,14 @@ ImageAlbum::~ImageAlbum()
 void ImageAlbum::reloadImages()
 {
     QDir dir("./Photo");
-//    QDir dir("./Image");
+    //    QDir dir("./Image");
     QStringList filters;
     filters << "*.png" << "*.jpg" << "*.bmp" << "*.gif";
     QFileInfoList fileInfoList = dir.entryInfoList(filters, QDir::Files | QDir::NoDotAndDotDot);
 
     ui->listWidget->clear();
+
+    // listWidget에 서버로부터 받아온 환자의 이미지들을 모두 띄워줌
     for(int i = 0; i < fileInfoList.count(); i++) {
         QListWidgetItem* item = new QListWidgetItem(QIcon(dir.path() + "/" + fileInfoList.at(i).fileName()), NULL, ui->listWidget); //, QListWidgetItem::UserType);
         item->setStatusTip(dir.path() + "/" + fileInfoList.at(i).fileName());
@@ -534,6 +541,7 @@ void ImageAlbum::reloadImages()
 // 임플란트 식립 버튼 클릭 시 ImageScene으로 해당 시그널 전송
 void ImageAlbum::Implant()
 {
+    // 이미지가 선택되지 않았다면 예외처리
     if(selectImage.isNull()){
         QMessageBox:: critical(this, "경고", "이미지를 선택하세요");
         return;
@@ -544,6 +552,7 @@ void ImageAlbum::Implant()
 // 캡처 버튼 클릭 시 ImageScene으로 해당 시그널 전송
 void ImageAlbum::Capture()
 {
+    // 이미지가 선택되지 않았다면 예외처리
     if(selectImage.isNull()){
         QMessageBox:: critical(this, "경고", "이미지를 선택하세요");
         return;
@@ -572,6 +581,7 @@ void ImageAlbum::Length()
     }
     emit SendType(ImageScene::DrawType::Length);
 
+    // 이미지의 원본 사이즈와 scaled된 사이즈를 ImageScene 클래스로 전송
     int origWidth = selectImage.width();
     int origHeight = selectImage.height();
     int sceneWidth = imageScene->width();
@@ -588,7 +598,7 @@ void ImageAlbum::TextBox()
         return;
     }
 
-    ui->lineEdit->text();
+    // lineEdit에 입력한 텍스트 데이터를 ImageScene 클래스로 전송
     emit SendText(ui->lineEdit->text());
     emit SendType(ImageScene::DrawType::Text);
     ui->lineEdit->clear();
@@ -679,8 +689,6 @@ void ImageAlbum::Freehand()
     emit SendType(ImageScene::DrawType::FreeHand);
 }
 
-
-
 // ColorDialog를 통해 색상이 선택되면 ImageScene으로 색상값 전송
 void ImageAlbum::BrushColor()
 {
@@ -712,6 +720,7 @@ void ImageAlbum::RightRotate()
     imageView->rotate(90);
 }
 
+//
 void ImageAlbum::OrigImage()
 {
     if(selectImage.isNull()){
@@ -737,6 +746,7 @@ void ImageAlbum::OrigImage()
     imageScene->setSceneRect(i->sceneBoundingRect());
 }
 
+// listWidget에서 이미지 더블클릭 시 해당 이미지가 graphicsView에 출력
 void ImageAlbum::selectItem(QListWidgetItem* item)
 {
     emit SendType(ImageScene::DrawType::Clear);
@@ -1345,7 +1355,7 @@ void ImageAlbum::receivePrescriptionCheck(QString signal)
     emit sendPrescriptionYesOrNot(signal);
 }
 
-//메인 윈도우에서 프린터 버튼 클릭 시 프린트 다이얼로그 출력 및 프린트 기능 실행
+// 메인 윈도우에서 프린터 버튼 클릭 시 프린트 다이얼로그 출력 및 프린트 기능 실행
 void ImageAlbum::receivePrintStart()
 {
     QPrinter printer(QPrinter::HighResolution);
